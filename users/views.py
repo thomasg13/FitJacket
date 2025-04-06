@@ -61,7 +61,7 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 def login_view(request):
-    next_url = request.GET.get("next", "movies:movie_list")
+    next_url = request.GET.get("next", "home:index")
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
