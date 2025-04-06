@@ -1,10 +1,6 @@
 # FitJacket
 
-### Hello. I'm Patrick
-
-HELLOOOOO
-GO JACKETSSSSS!!!!
-~谎言不会伤人~
-
-
-wo shi ivan
+## How to Run Project locally
+python manage.py makemigrations  
+python manage.py migrate  
+python manage.py runserver
