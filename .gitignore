@@ -1,3 +1,9 @@
+# JetBrains IDEs
+.idea/
+
+# SpecStory tool output
+.specstory/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
