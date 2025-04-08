@@ -15,14 +15,15 @@ class WorkoutForm(forms.ModelForm):
 class ExerciseForm(forms.ModelForm):
     class Meta:
         model = Exercise
-        fields = ['name', 'exercise_type', 'sets', 'reps', 'duration_minutes', 'duration_seconds']
+        fields = ['name', 'exercise_type', 'sets', 'reps', 'duration_minutes', 'duration_seconds', 'weight']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'exercise_type': forms.Select(attrs={'class': 'form-control exercise-type-select'}, choices=[('rep-based', 'Rep-based'), ('timed', 'Timed')]),
             'sets': forms.NumberInput(attrs={'class': 'form-control rep-based-field', 'min': '1'}),
             'reps': forms.NumberInput(attrs={'class': 'form-control rep-based-field', 'min': '1'}),
             'duration_minutes': forms.NumberInput(attrs={'class': 'form-control timed-field', 'min': '0'}),
-            'duration_seconds': forms.NumberInput(attrs={'class': 'form-control timed-field', 'min': '0', 'max': '59'})
+            'duration_seconds': forms.NumberInput(attrs={'class': 'form-control timed-field', 'min': '0', 'max': '59'}),
+            'weight': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '0.5'})
         }
     
     def __init__(self, *args, **kwargs):

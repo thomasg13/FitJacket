@@ -54,6 +54,10 @@
                                                 {{ form.duration_seconds }}
                                             </td>
                                             <td>
+                                                <label for="{{ form.weight.id_for_label }}" class="form-label">Weight (lbs)</label>
+                                                {{ form.weight }}
+                                            </td>
+                                            <td>
                                                 <button type="button" class="btn btn-link text-danger delete-exercise" title="Delete exercise">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
@@ -149,6 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const repBasedFields = row.querySelectorAll('.rep-based-field');
         const timedFields = row.querySelectorAll('.timed-field');
+        const weightField = row.querySelector('td:nth-child(6)'); // weight field is in the 6th column
         
         if (type === 'rep-based') {
             console.log('Showing rep-based fields');
@@ -315,6 +320,11 @@ document.addEventListener('DOMContentLoaded', function() {
         display: none;
     }
     
+    /* make sure weight field is always visible */
+    .exercise-form td:nth-child(6) {
+        display: table-cell !important;
+    }
+    
     .exercise-form .form-label {
         font-size: 0.8rem;
         margin-bottom: 0.2rem;
@@ -327,6 +337,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     .exercise-form td {
         min-width: 100px;
+    }
+    
+    /* Center the delete button vertically */
+    .exercise-form td:last-child {
+        vertical-align: middle;
     }
     
     @media (max-width: 768px) {
