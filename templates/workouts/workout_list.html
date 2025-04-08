@@ -35,12 +35,18 @@
                                                 <td>
                                                     {% if exercise.exercise_type == 'rep-based' %}
                                                         {{ exercise.sets }} sets × {{ exercise.reps }} reps
+                                                        {% if exercise.weight %}
+                                                            @ {{ exercise.weight }} lbs
+                                                        {% endif %}
                                                     {% else %}
                                                         {% if exercise.duration_minutes %}
                                                             {{ exercise.duration_minutes }} min
                                                         {% endif %}
                                                         {% if exercise.duration_seconds %}
                                                             {% if exercise.duration_minutes %} {% endif %}{{ exercise.duration_seconds }} sec
+                                                        {% endif %}
+                                                        {% if exercise.weight %}
+                                                            @ {{ exercise.weight }} lbs
                                                         {% endif %}
                                                     {% endif %}
                                                 </td>
