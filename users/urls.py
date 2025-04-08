@@ -1,8 +1,6 @@
 from django.urls import path
-from django.views.generic import RedirectView
 
 from . import views
-from django.contrib.auth import views as auth_views
 
 
 app_name = 'users'
