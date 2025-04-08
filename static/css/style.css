@@ -1,0 +1,103 @@
+/* ===== Global Reset & Base ===== */
+body {
+  background-color: #f8f9fa;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  color: #212529;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ===== Navbar Styling ===== */
+.navbar {
+  background-color: #1e1e2f;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.navbar-brand img {
+  height: 40px;
+}
+
+.navbar-nav .nav-link {
+  color: #ffffff !important;
+  font-weight: 500;
+  margin-left: 1rem;
+  transition: color 0.2s ease;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus {
+  color: #ffc107 !important; /* Bootstrap warning yellow */
+}
+
+/* ===== Dropdown Menu ===== */
+.dropdown-menu {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f1f1;
+  color: #212529;
+}
+
+/* ===== Content Container ===== */
+.container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  max-width: 960px;
+}
+
+/* ===== Footer Styling ===== */
+footer {
+  background-color: #1e1e2f;
+  color: #ffffff;
+  padding-top: 3rem;
+  padding-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+footer h5 {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+}
+
+footer a {
+  color: #ffffff;
+  transition: color 0.2s ease;
+}
+
+footer a.footer-link:hover {
+  color: #ffc107;
+  text-decoration: underline;
+}
+
+footer .fas {
+  color: #ffc107;
+  margin-right: 0.5rem;
+}
+
+/* ===== Utility Classes ===== */
+.text-center {
+  text-align: center;
+}
+
+.mt-5 {
+  margin-top: 3rem !important;
+}
