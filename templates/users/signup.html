@@ -5,34 +5,26 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card p-4 shadow">
-                <h2 class="text-center">Sign Up</h2>
+                <h2 class="text-center mb-4">Sign Up</h2>
 
                 {% if messages %}
                     {% for message in messages %}
-                        <div class="alert alert-danger">{{ message }}</div>
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
                     {% endfor %}
                 {% endif %}
 
-                <!-- Display errors -->
-                {% if form.non_field_errors %}
-                    <div class="alert alert-danger">
-                        {% for error in form.non_field_errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-
-                <form method="post">
+                <form method="post" novalidate>
                     {% csrf_token %}
 
                     <!-- Username Field -->
                     <div class="mb-3">
-                        <label class="form-label">Username:</label>
-                        <input type="text" name="username" class="form-control" required>
+                        <label for="id_username" class="form-label">Username:</label>
+                        <input type="text" name="username" id="id_username" class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                               value="{{ form.username.value|default:'' }}" required>
                         {% if form.username.errors %}
-                            <div class="text-danger">
+                            <div class="invalid-feedback">
                                 {% for error in form.username.errors %}
-                                    <p>{{ error }}</p>
+                                    {{ error }}
                                 {% endfor %}
                             </div>
                         {% endif %}
@@ -40,12 +32,13 @@
 
                     <!-- Email -->
                     <div class="mb-3">
-                        <label class="form-label">Email:</label>
-                        <input type="email" name="email" class="form-control" required>
+                        <label for="id_email" class="form-label">Email:</label>
+                        <input type="email" name="email" id="id_email" class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+                               value="{{ form.email.value|default:'' }}" required>
                         {% if form.email.errors %}
-                            <div class="text-danger">
+                            <div class="invalid-feedback">
                                 {% for error in form.email.errors %}
-                                    <p>{{ error }}</p>
+                                    {{ error }}
                                 {% endfor %}
                             </div>
                         {% endif %}
@@ -53,12 +46,12 @@
 
                     <!-- Password1 -->
                     <div class="mb-3">
-                        <label class="form-label">Password:</label>
-                        <input type="password" name="password1" class="form-control" required>
+                        <label for="id_password1" class="form-label">Password:</label>
+                        <input type="password" name="password1" id="id_password1" class="form-control {% if form.password1.errors %}is-invalid{% endif %}" required>
                         {% if form.password1.errors %}
-                            <div class="text-danger">
+                            <div class="invalid-feedback">
                                 {% for error in form.password1.errors %}
-                                    <p>{{ error }}</p>
+                                    {{ error }}
                                 {% endfor %}
                             </div>
                         {% endif %}
@@ -66,12 +59,12 @@
 
                     <!-- Password2 -->
                     <div class="mb-3">
-                        <label class="form-label">Confirm Password:</label>
-                        <input type="password" name="password2" class="form-control" required>
+                        <label for="id_password2" class="form-label">Confirm Password:</label>
+                        <input type="password" name="password2" id="id_password2" class="form-control {% if form.password2.errors %}is-invalid{% endif %}" required>
                         {% if form.password2.errors %}
-                            <div class="text-danger">
+                            <div class="invalid-feedback">
                                 {% for error in form.password2.errors %}
-                                    <p>{{ error }}</p>
+                                    {{ error }}
                                 {% endfor %}
                             </div>
                         {% endif %}
@@ -79,11 +72,19 @@
 
                     <!-- Security Question -->
                     <div class="mb-3">
-                        <label class="form-label">Security Question: What is your mother's maiden name?</label>
-                        <input type="text" name="security_answer" class="form-control" required>
+                        <label for="id_security_answer" class="form-label">Security Question: What is your mother's maiden name?</label>
+                        <input type="text" name="security_answer" id="id_security_answer" class="form-control {% if form.security_answer.errors %}is-invalid{% endif %}"
+                               value="{{ form.security_answer.value|default:'' }}" required>
+                        {% if form.security_answer.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.security_answer.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
 
-                    <button type="submit" class="btn btn-success w-100">Sign Up</button>
+                    <button type="submit" class="btn btn-primary w-100">Sign Up</button>
                 </form>
 
                 <p class="mt-3 text-center">

@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h2 class="text-center">Create New Workout</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate id="workout-form">
+                        {% csrf_token %}
+                        
+                        <!-- Workout Date -->
+                        <div class="mb-3">
+                            <label for="id_date" class="form-label">Workout Date</label>
+                            {{ workout_form.date }}
+                            {% if workout_form.date.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in workout_form.date.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Exercises -->
+                        <h4 class="mb-3">Exercises</h4>
+                        <div class="table-responsive">
+                            <table class="table">
+                                {{ formset.management_form }}
+                                <thead>
+                                    <tr>
+                                        <th>Exercise</th>
+                                        <th>Sets</th>
+                                        <th>Reps</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="exercise-forms">
+                                    {% for form in formset %}
+                                        <tr class="exercise-form">
+                                            <td>{{ form.name }}</td>
+                                            <td>{{ form.sets }}</td>
+                                            <td>{{ form.reps }}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-link text-dark delete-exercise" title="Delete exercise">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-3">
+                            <button type="button" class="btn btn-outline-primary" id="add-exercise">
+                                <i class="fas fa-plus"></i> Add Another Exercise
+                            </button>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">Save Workout</button>
+                            <a href="{% url 'workouts:workout_list' %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addButton = document.getElementById('add-exercise');
+    const totalForms = document.getElementById('id_exercises-TOTAL_FORMS');
+    const exerciseForms = document.getElementById('exercise-forms');
+    const emptyForm = document.querySelector('.exercise-form').cloneNode(true);
+    
+    // Clear the empty form
+    const inputs = emptyForm.querySelectorAll('input');
+    inputs.forEach(input => {
+        input.value = '';
+        input.checked = false;
+    });
+    
+    // Update the form index
+    function updateFormIndex() {
+        const forms = document.querySelectorAll('.exercise-form');
+        forms.forEach((form, index) => {
+            const inputs = form.querySelectorAll('input');
+            inputs.forEach(input => {
+                if (input.name) {
+                    input.name = input.name.replace(/-\d+-/, `-${index}-`);
+                    input.id = input.id.replace(/-\d+-/, `-${index}-`);
+                }
+            });
+        });
+    }
+    
+    addButton.addEventListener('click', function() {
+        const newForm = emptyForm.cloneNode(true);
+        const formCount = document.querySelectorAll('.exercise-form').length;
+        
+        // Update the form index
+        const inputs = newForm.querySelectorAll('input');
+        inputs.forEach(input => {
+            if (input.name) {
+                input.name = input.name.replace(/-\d+-/, `-${formCount}-`);
+                input.id = input.id.replace(/-\d+-/, `-${formCount}-`);
+            }
+        });
+        
+        exerciseForms.appendChild(newForm);
+        totalForms.value = formCount + 1;
+    });
+
+    // Handle exercise deletion
+    document.getElementById('exercise-forms').addEventListener('click', function(e) {
+        if (e.target.closest('.delete-exercise')) {
+            const row = e.target.closest('tr');
+            row.remove();
+            updateFormIndexes();
+        }
+    });
+
+    function updateFormIndexes() {
+        const forms = document.querySelectorAll('.exercise-form');
+        forms.forEach((form, index) => {
+            const inputs = form.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                const name = input.getAttribute('name');
+                if (name) {
+                    input.setAttribute('name', name.replace(/-\d+-/, `-${index}-`));
+                    input.setAttribute('id', `id_${name.replace(/-\d+-/, `-${index}-`)}`);
+                }
+            });
+        });
+    }
+});
+</script>
+{% endblock %}
+
+{% endblock %} 
