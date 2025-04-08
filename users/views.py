@@ -56,42 +56,31 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 def login_view(request):
-    next_url = request.GET.get("next", "home:index")
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect(next_url)
-        else:
-            messages.error(request, "Invalid username or password.")
-
+            return redirect(request.GET.get("next", 'home:index'))
     else:
         form = AuthenticationForm()
-
     return render(request, "users/login.html", {"form": form})
 
 
 
 def logout_view(request):
-    next_url = request.GET.get("next", "home:index")
     logout(request)
-    return redirect(next_url)  # Redirect to login page after logout
+    return redirect('home:index')  
 
 def signup_view(request):
-    next_url = request.GET.get("next", "home:index")
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect(next_url)
+            return redirect('home:index')
         else:
             messages.error(request, "Please correct the errors below.")
-            # for field, errors in form.errors.items():
-            #     for error in errors:
-            #         messages.error(request, f"{field.capitalize()}: {error}")
-
     else:
         form = CustomUserCreationForm()
 
