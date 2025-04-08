@@ -15,6 +15,7 @@ class Exercise(models.Model):
     # rep-based fields
     sets = models.PositiveIntegerField(null=True, blank=True)
     reps = models.PositiveIntegerField(null=True, blank=True)
+    weight = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, help_text="weight in pounds")
     
     # timed fields
     duration_minutes = models.PositiveIntegerField(null=True, blank=True)
