@@ -16,24 +16,8 @@
             {% for workout in workouts %}
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100 shadow-sm">
-                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <div class="card-header bg-primary text-white">
                             <h5 class="mb-0">{{ workout.date|date:"F j, Y" }}</h5>
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="workoutDropdown{{ workout.id }}" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-ellipsis-v"></i>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="workoutDropdown{{ workout.id }}">
-                                    <li><a class="dropdown-item" href="{% url 'workouts:edit_workout' workout.id %}"><i class="fas fa-edit"></i> Edit</a></li>
-                                    <li>
-                                        <form method="post" action="{% url 'workouts:delete_workout' workout.id %}" class="d-inline">
-                                            {% csrf_token %}
-                                            <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Are you sure you want to delete this workout?')">
-                                                <i class="fas fa-trash"></i> Delete
-                                            </button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -57,10 +41,16 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="card-footer bg-light">
+                        <div class="card-footer bg-light d-flex justify-content-between align-items-center">
                             <small class="text-muted">
                                 <i class="fas fa-dumbbell"></i> {{ workout.exercises.count }} exercises
                             </small>
+                            <form method="post" action="{% url 'workouts:delete_workout' workout.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link text-dark p-0" onclick="return confirm('Are you sure you want to delete this workout?')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -73,9 +63,6 @@
             </div>
             <h3 class="text-muted">No Workouts Yet</h3>
             <p class="text-muted">Start tracking your fitness journey by logging your first workout!</p>
-            <a href="{% url 'workouts:create_workout' %}" class="btn btn-primary mt-3">
-                <i class="fas fa-plus"></i> Log Your First Workout
-            </a>
         </div>
     {% endif %}
 </div>
@@ -91,8 +78,11 @@
         font-weight: 600;
         color: #6c757d;
     }
-    .dropdown-toggle::after {
-        display: none;
+    .btn-link {
+        text-decoration: none;
+    }
+    .btn-link:hover {
+        opacity: 0.8;
     }
 </style>
 {% endblock %}

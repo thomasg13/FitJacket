@@ -6,10 +6,10 @@
         <div class="col-md-8">
             <div class="card shadow">
                 <div class="card-header">
-                    <h2 class="text-center">Create New Workout</h2>
+                    <h2 class="text-center">{% if is_edit %}Edit Workout{% else %}Create New Workout{% endif %}</h2>
                 </div>
                 <div class="card-body">
-                    <form method="post" novalidate id="workout-form">
+                    <form method="post" id="workout-form">
                         {% csrf_token %}
                         
                         <!-- Workout Date -->
@@ -45,6 +45,10 @@
                                             <td>{{ form.sets }}</td>
                                             <td>{{ form.reps }}</td>
                                             <td>
+                                                {% if form.instance.pk %}
+                                                    <input type="hidden" name="{{ form.prefix }}-id" value="{{ form.instance.pk }}">
+                                                    <input type="hidden" name="{{ form.prefix }}-DELETE" id="{{ form.prefix }}-DELETE" value="0">
+                                                {% endif %}
                                                 <button type="button" class="btn btn-link text-dark delete-exercise" title="Delete exercise">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
@@ -62,7 +66,7 @@
                         </div>
 
                         <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary">Save Workout</button>
+                            <button type="submit" class="btn btn-primary" id="submit-workout">Save Workout</button>
                             <a href="{% url 'workouts:workout_list' %}" class="btn btn-secondary">Cancel</a>
                         </div>
                     </form>
@@ -79,6 +83,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const totalForms = document.getElementById('id_exercises-TOTAL_FORMS');
     const exerciseForms = document.getElementById('exercise-forms');
     const emptyForm = document.querySelector('.exercise-form').cloneNode(true);
+    const submitButton = document.getElementById('submit-workout');
+    const workoutForm = document.getElementById('workout-form');
     
     // Clear the empty form
     const inputs = emptyForm.querySelectorAll('input');
@@ -100,6 +106,36 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
+    // Validate a single exercise form
+    function validateExerciseForm(form) {
+        const nameInput = form.querySelector('input[name$="-name"]');
+        const setsInput = form.querySelector('input[name$="-sets"]');
+        const repsInput = form.querySelector('input[name$="-reps"]');
+        
+        return nameInput.value.trim() && 
+               setsInput.value && setsInput.value > 0 && 
+               repsInput.value && repsInput.value > 0;
+    }
+
+    // Check if there are any exercises and if they are valid
+    function checkExercises() {
+        const forms = document.querySelectorAll('.exercise-form');
+        const hasValidExercises = Array.from(forms).some(form => {
+            const nameInput = form.querySelector('input[name$="-name"]');
+            return nameInput && nameInput.value.trim() !== '';
+        });
+        
+        let allFieldsComplete = true;
+        forms.forEach(form => {
+            if (!validateExerciseForm(form)) {
+                allFieldsComplete = false;
+            }
+        });
+        
+        // Enable submit button only if all validations pass
+        submitButton.disabled = !(hasValidExercises && allFieldsComplete);
+    }
     
     addButton.addEventListener('click', function() {
         const newForm = emptyForm.cloneNode(true);
@@ -116,14 +152,33 @@ document.addEventListener('DOMContentLoaded', function() {
         
         exerciseForms.appendChild(newForm);
         totalForms.value = formCount + 1;
+        checkExercises();
     });
 
     // Handle exercise deletion
     document.getElementById('exercise-forms').addEventListener('click', function(e) {
         if (e.target.closest('.delete-exercise')) {
             const row = e.target.closest('tr');
-            row.remove();
+            const deleteInput = row.querySelector('input[name$="-DELETE"]');
+            
+            if (deleteInput) {
+                // For existing exercises, mark for deletion
+                deleteInput.value = "1";
+                row.style.display = 'none';
+            } else {
+                // For new exercises, remove from DOM
+                row.remove();
+            }
+            
             updateFormIndexes();
+            checkExercises();
+        }
+    });
+
+    // Add input event listeners to all exercise fields
+    document.getElementById('exercise-forms').addEventListener('input', function(e) {
+        if (e.target.matches('input[name$="-name"], input[name$="-sets"], input[name$="-reps"]')) {
+            checkExercises();
         }
     });
 
@@ -139,7 +194,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
+        totalForms.value = forms.length;
     }
+
+    // Add form submission debugging
+    workoutForm.addEventListener('submit', function(e) {
+        console.log('Form submitted');
+        console.log('Total forms:', totalForms.value);
+        
+        // Check if the form is valid
+        const forms = document.querySelectorAll('.exercise-form');
+        let isValid = true;
+        forms.forEach(form => {
+            if (!validateExerciseForm(form)) {
+                isValid = false;
+                console.log('Invalid form found');
+            }
+        });
+        
+        if (!isValid) {
+            console.log('Form validation failed');
+            e.preventDefault();
+        }
+    });
+
+    // Initial check
+    checkExercises();
 });
 </script>
 {% endblock %}

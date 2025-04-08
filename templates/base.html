@@ -13,10 +13,10 @@
 
   <body>
     <!-- Header -->
-    <nav class="p-3 navbar navbar-dark bg-dark navbar-expand-lg">
-      <div class="container">
-        <a class="navbar-brand" href="{% url 'home:index' %}">
-          <img src="{% static 'img/logo.png' %}" alt="logo" height="40" />
+    <nav class="p-3 navbar navbar-dark bg-dark navbar-expand-lg" style="height: 100px;">
+      <div class="container h-100">
+        <a class="navbar-brand d-flex align-items-center h-100" href="{% url 'home:index' %}">
+          <img src="{% static 'images/logo.png' %}" alt="logo" width="90" height="90" />
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
           aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,6 +67,9 @@
           <li class="mb-2">
             <a class="text-white text-decoration-none footer-link" href="{% url 'home:about' %}">
               About
+            </a>
+            <a class="text-white text-decoration-none footer-link" href="{% url 'workouts:workout_list' %}">
+              Workouts
             </a>
           </li>
         </ul>
