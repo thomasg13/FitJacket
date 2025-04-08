@@ -84,7 +84,7 @@ def logout_view(request):
     return redirect(next_url)  # Redirect to login page after logout
 
 def signup_view(request):
-    next_url = request.GET.get("next", "movies:movie_list")
+    next_url = request.GET.get("next", "home:index")
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
