@@ -26,4 +26,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),  # Default Django admin site
     path('', include('home.urls')),
     path("users/", include('users.urls')),
+    path('goals/', include('goals.urls')),
 ]
