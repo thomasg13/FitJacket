@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<style>
+  .about-img {
+    width: 500px;
+    height: auto;
+  }
+</style>
+<div class="p-3">
+  <div class="container">
+    <div class="row mt-3">
+      <div class="col-md-6 mx-auto mb-3">
+        <h2>About</h2>
+        <hr />
+        <p>
+           FitJacket helps users stay active! With FitJacket, users can track their fitness progress
+            and get personalized workout recommendations. FitJacket provides an Ai-powered personalized
+            fitness experience that adapts to user goals and progress.
+        </p>
+        <p>
+          To motivate users, FitJacket includes social features where users can connect with friends,
+          join challenges, and celebrate achievements. The platform also integrates fitness tracking
+           APIs to sync workout data from third-party apps and devices, to make tracking more
+            convenient.
+        </p>
+      </div>
+      <div class="col-md-6 mx-auto mb-3 text-center">
+        <img src="{% static 'img/about.jpg' %}"
+             class="image-fluid about-img"
+             alt="about" />
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
