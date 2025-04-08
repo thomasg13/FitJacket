@@ -1,8 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-  <h1>Fitness Goals</h1>
-  <p>Welcome to your fitness goals dashboard.</p>
+<div class="container">
+  <h2 class="mb-4">My Fitness Goals</h2>
+
+  <form method="POST" class="mb-4">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="id_water_intake" class="form-label">Water Intake (oz)</label>
+      {{ form.water_intake }}
+    </div>
+    <div class="mb-3">
+      <label for="id_steps" class="form-label">Daily Steps</label>
+      {{ form.steps }}
+    </div>
+    <div class="mb-3">
+      <label for="id_calories" class="form-label">Daily Calories</label>
+      {{ form.calories }}
+    </div>
+    <button type="submit" class="btn btn-primary">Save Goals</button>
+  </form>
+
+  <div class="alert alert-info">
+    <p><strong>Water:</strong> {{ goal.water_intake }} oz/day</p>
+    <p><strong>Steps:</strong> {{ goal.steps }} per day</p>
+    <p><strong>Calories:</strong> {{ goal.calories }} kcal/day</p>
+  </div>
 </div>
 {% endblock %}
