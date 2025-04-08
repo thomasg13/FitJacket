@@ -25,16 +25,25 @@
                                     <thead>
                                         <tr>
                                             <th>Exercise</th>
-                                            <th>Sets</th>
-                                            <th>Reps</th>
+                                            <th>Details</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for exercise in workout.exercises.all %}
                                             <tr>
                                                 <td>{{ exercise.name }}</td>
-                                                <td>{{ exercise.sets }}</td>
-                                                <td>{{ exercise.reps }}</td>
+                                                <td>
+                                                    {% if exercise.exercise_type == 'rep-based' %}
+                                                        {{ exercise.sets }} sets × {{ exercise.reps }} reps
+                                                    {% else %}
+                                                        {% if exercise.duration_minutes %}
+                                                            {{ exercise.duration_minutes }} min
+                                                        {% endif %}
+                                                        {% if exercise.duration_seconds %}
+                                                            {% if exercise.duration_minutes %} {% endif %}{{ exercise.duration_seconds }} sec
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
