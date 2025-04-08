@@ -1,5 +1,3 @@
-<!-- workouts/templates/workouts/workout_list.html -->
-
 {% extends 'base.html' %}
 
 {% block content %}
@@ -45,7 +43,7 @@
                                                         </span>
                                                         {% if exercise.weight %}
                                                             <span class="badge bg-light text-dark">
-                                                                <i class="fas fa-weight-hanging me-1"></i>{{ exercise.weight }} lbs
+                                                                <i class="fas fa-weight-hanging me-1"></i>{% if exercise.weight|floatformat:0 == exercise.weight|floatformat %}{{ exercise.weight|floatformat:0 }}{% else %}{{ exercise.weight }}{% endif %} lbs
                                                             </span>
                                                         {% endif %}
                                                     {% else %}
@@ -60,7 +58,7 @@
                                                         </span>
                                                         {% if exercise.weight %}
                                                             <span class="badge bg-light text-dark">
-                                                                <i class="fas fa-weight-hanging me-1"></i>{{ exercise.weight }} lbs
+                                                                <i class="fas fa-weight-hanging me-1"></i>{% if exercise.weight|floatformat:0 == exercise.weight|floatformat %}{{ exercise.weight|floatformat:0 }}{% else %}{{ exercise.weight }}{% endif %} lbs
                                                             </span>
                                                         {% endif %}
                                                     {% endif %}
