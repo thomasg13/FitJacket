@@ -74,7 +74,7 @@ def login_view(request):
 
 
 def logout_view(request):
-    next_url = request.GET.get("next", "users:login")
+    next_url = request.GET.get("next", "home:index")
     logout(request)
     return redirect(next_url)  # Redirect to login page after logout
 
