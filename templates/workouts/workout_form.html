@@ -6,7 +6,7 @@
         <div class="col-md-8">
             <div class="card shadow">
                 <div class="card-header">
-                    <h2 class="text-center">{% if is_edit %}Edit Workout{% else %}Create New Workout{% endif %}</h2>
+                    <h2 class="text-center">Create New Workout</h2>
                 </div>
                 <div class="card-body">
                     <form method="post" id="workout-form">
@@ -45,11 +45,7 @@
                                             <td>{{ form.sets }}</td>
                                             <td>{{ form.reps }}</td>
                                             <td>
-                                                {% if form.instance.pk %}
-                                                    <input type="hidden" name="{{ form.prefix }}-id" value="{{ form.instance.pk }}">
-                                                    <input type="hidden" name="{{ form.prefix }}-DELETE" id="{{ form.prefix }}-DELETE" value="0">
-                                                {% endif %}
-                                                <button type="button" class="btn btn-link text-dark delete-exercise" title="Delete exercise">
+                                                <button type="button" class="btn btn-link text-danger delete-exercise" title="Delete exercise">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </td>
@@ -159,17 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('exercise-forms').addEventListener('click', function(e) {
         if (e.target.closest('.delete-exercise')) {
             const row = e.target.closest('tr');
-            const deleteInput = row.querySelector('input[name$="-DELETE"]');
-            
-            if (deleteInput) {
-                // For existing exercises, mark for deletion
-                deleteInput.value = "1";
-                row.style.display = 'none';
-            } else {
-                // For new exercises, remove from DOM
-                row.remove();
-            }
-            
+            row.remove();
             updateFormIndexes();
             checkExercises();
         }
