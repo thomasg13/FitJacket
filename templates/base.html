@@ -19,10 +19,10 @@
   <body class="d-flex flex-column min-vh-100">
 
     <!-- Header -->
-    <nav class="p-3 navbar navbar-dark bg-dark navbar-expand-lg">
-      <div class="container">
-        <a class="navbar-brand" href="{% url 'home:index' %}">
-          <img src="{% static 'img/logo.png' %}" alt="logo" height="40" />
+    <nav class="p-3 navbar navbar-dark bg-dark navbar-expand-lg" style="height: 100px;">
+      <div class="container h-100">
+        <a class="navbar-brand d-flex align-items-center h-100" href="{% url 'home:index' %}">
+          <img src="{% static 'images/logo.png' %}" alt="logo" width="80px" height="80px" />
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
           aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,6 +31,8 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <div class="navbar-nav ms-auto navbar-ml">
             <a class="nav-link" href="{% url 'home:about' %}">About</a>
+            <a class="nav-link" href="{% url 'workouts:workout_list' %}">Workouts</a>
+            <a class="nav-link" href="{% url 'goals:goals_home' %}">Goals</a>
             {% if user.is_authenticated %}
               <div class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
