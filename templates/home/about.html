@@ -1,6 +1,35 @@
 {% extends 'base.html' %}
-
 {% block content %}
-    <h1>About FitJacket</h1>
-
-{% endblock %}
+{% load static %}
+<div class="p-3">
+  <div class="container">
+    <div class="row mt-3">
+      <div class="col-md-6 mx-auto mb-3">
+        <h2>About</h2>
+        <hr />
+        <p>
+           With FitJacket, fitness is more easy and accessible than ever before.
+            Users can track their progress
+            and get personalized workout recommendations. FitJacket offers AI-powered workout plans
+            that adapt to users goals and progress. FitJacket is web-based, so users can access
+            their fitness plan from any device with internet.
+        </p>
+        <p>
+          To make fitness fun, FitJacket helps cultivate a fitness community. With FitJacket, users can
+            connect with friends, join challenges, and celebrate their achievements.
+            FitJacket includes challenges, leaderboards, and achievement badges to help
+            motivate users.
+            FitJacket also integrates fitness tracking APIs to get real-time data
+            from external devices and apps,
+            improving the accuracy of fitness insights.
+        </p>
+      </div>
+      <div class="col-md-6 mx-auto mb-3 text-center">
+        <img src="{% static 'images/logo.png' %}"
+             style="width: 400px; height: auto;"
+             alt="about" />
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
