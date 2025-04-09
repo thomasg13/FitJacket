@@ -7,4 +7,5 @@ urlpatterns = [
     path('new/', views.create_workout, name='create_workout'),
     path('<int:workout_id>/delete/', views.delete_workout, name='delete_workout'),
     path('', views.workout_list, name='workout_list'),
+    path('chatbot/', views.chatbot_view, name='chatbot'),
 ]
