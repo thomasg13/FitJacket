@@ -20,3 +20,14 @@ def create_challenge(request):
     else:
         form = ChallengeForm()
     return render(request, 'challenge/create_challenge.html', {'form': form})
+
+@login_required
+def join_challenge(request, challenge_id):
+    # Get the challenge object or 404 if it doesn't exist
+    challenge = get_object_or_404(Challenge, id=challenge_id)
+
+    # Add the user to the challenge participants
+    challenge.participants.add(request.user)
+
+    # Redirect back to the challenge list page
+    return redirect('challenge:challenge_list')

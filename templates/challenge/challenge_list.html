@@ -11,16 +11,21 @@
         <p><strong>Created by:</strong> {{ challenge.creator.username }}</p>
         <p><strong>Dates:</strong> {{ challenge.start_date|date:"M. j, Y" }} to {{ challenge.end_date|date:"M. j, Y" }}</p>
 
+        <!-- Badge showing if user is creator or joined -->
         {% if user == challenge.creator %}
           <span class="badge bg-info text-dark">You created this</span>
         {% elif user in challenge.participants.all %}
           <span class="badge bg-success">You joined</span>
-        {% else %}
-          <form action="{% url 'challenge:join_challenge' challenge.id %}" method="post" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-outline-primary btn-sm">Join</button>
-          </form>
         {% endif %}
+
+        <!-- Always show the Join button for the creator and other users -->
+        <form action="{% url 'challenge:join_challenge' challenge.id %}" method="post" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-primary btn-sm"
+            {% if user in challenge.participants.all %} disabled {% endif %}>
+            {% if user in challenge.participants.all %}Joined{% else %}Join{% endif %}
+          </button>
+        </form>
       </li>
     {% empty %}
       <li class="list-group-item">No challenges available.</li>
