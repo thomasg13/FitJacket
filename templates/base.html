@@ -33,6 +33,8 @@
             <a class="nav-link" href="{% url 'home:about' %}">About</a>
             <a class="nav-link" href="{% url 'workouts:workout_list' %}">Workouts</a>
             <a class="nav-link" href="{% url 'goals:goals_home' %}">Goals</a>
+            <a class="nav-link" href="{% url 'challenge:challenge_list' %}">Challenges</a>
+
             {% if user.is_authenticated %}
               <div class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

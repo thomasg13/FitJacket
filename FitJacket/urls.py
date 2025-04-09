@@ -12,4 +12,5 @@ urlpatterns = [
     path("users/", include('users.urls')),
     path("workouts/", include('workouts.urls')),
     path('goals/', include('goals.urls')),
+    path('challenge/', include(('challenge.urls', 'challenge'), namespace='challenge')),
 ]
