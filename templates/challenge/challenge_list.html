@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Workout Challenges</h2>
+
+  <ul class="list-group mt-4">
+    {% for challenge in challenges %}
+      <li class="list-group-item mb-3">
+        <h5>{{ challenge.title }}</h5>
+        <p>{{ challenge.description }}</p>
+        <p><strong>Created by:</strong> {{ challenge.creator.username }}</p>
+        <p><strong>Dates:</strong> {{ challenge.start_date }} to {{ challenge.end_date }}</p>
+
+        {% if user in challenge.participants.all %}
+          <span class="badge bg-success">You joined</span>
+        {% else %}
+          <span class="badge bg-secondary">Not joined</span>
+        {% endif %}
+      </li>
+    {% empty %}
+      <li class="list-group-item">No challenges available.</li>
+    {% endfor %}
+  </ul>
+
+  <!-- Move create button to bottom -->
+  <div class="text-center mt-5">
+    <a href="{% url 'challenge:create_challenge' %}" class="btn btn-primary">+ Create New Challenge</a>
+  </div>
+{% endblock %}
