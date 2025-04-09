@@ -1,0 +1,49 @@
+<!-- 🔘 Chat Toggle Button -->
+<div id="chat-toggle" onclick="toggleChat()">💬</div>
+
+<!-- 💬 Chat Window -->
+<div id="chat-window">
+  <div id="chat-header">FitBot <span onclick="toggleChat()">✖</span></div>
+  <div id="chat-log"></div>
+  <div id="chat-input">
+    <input type="text" id="chat-message" placeholder="Ask FitBot..." />
+    <button onclick="sendChat()">Send</button>
+  </div>
+</div>
+
+<style>
+  /* styles here (same as previous message) */
+</style>
+
+<script>
+  function toggleChat() {
+    const chat = document.getElementById("chat-window");
+    chat.style.display = chat.style.display === "flex" ? "none" : "flex";
+  }
+
+  async function sendChat() {
+    const input = document.getElementById("chat-message");
+    const message = input.value.trim();
+    if (!message) return;
+
+    appendChat("You", message);
+    input.value = "";
+
+    const response = await fetch("/workouts/chatbot/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message })
+    });
+
+    const data = await response.json();
+    appendChat("FitBot", data.reply);
+  }
+
+  function appendChat(sender, text) {
+    const log = document.getElementById("chat-log");
+    const msg = document.createElement("div");
+    msg.innerHTML = `<strong>${sender}:</strong> ${text}`;
+    log.appendChild(msg);
+    log.scrollTop = log.scrollHeight;
+  }
+</script>
