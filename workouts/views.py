@@ -7,7 +7,7 @@ import logging
 from openai import OpenAI
 from django.conf import settings
 
-client = OpenAI(api_key=settings.OPEN_AI_API_KEY)
+client = OpenAI(api_key=settings.OPENAI_API_KEY)
 from django.conf import settings
 from django.http     import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
