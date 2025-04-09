@@ -25,6 +25,7 @@ STATICFILES_DIRS = [
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-l8tt1-fnqmajwt25q!4z+tgi2gmbfdycfr-+ma-2yr+#p5cg$='
+OPEN_AI_API_KEY = "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"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

@@ -4,6 +4,14 @@ from django.contrib import messages
 from .models import Workout
 from workouts.forms import WorkoutForm, ExerciseFormSet
 import logging
+from openai import OpenAI
+from django.conf import settings
+
+client = OpenAI(api_key=settings.OPEN_AI_API_KEY)
+from django.conf import settings
+from django.http     import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -49,3 +57,23 @@ def delete_workout(request, workout_id):
         messages.success(request, 'Workout deleted successfully!')
         return redirect('workouts:workout_list')
     return render(request, 'workouts/workout_confirm_delete.html', {'workout': workout})
+
+@csrf_exempt
+def chatbot_view(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        user_message = data.get("message", "")
+
+        try:
+            response = client.chat.completions.create(model="gpt-3.5-turbo",  # or "gpt-4" if you're using it
+            messages=[
+                {"role": "system", "content": "You are a helpful fitness assistant named FitBot."},
+                {"role": "user", "content": user_message}
+            ])
+            reply = response.choices[0].message.content.strip()
+            return JsonResponse({"reply": reply})
+
+        except Exception as e:
+            return JsonResponse({"reply": f"Error: {str(e)}"})
+
+    return JsonResponse({"reply": "Invalid request method."})
