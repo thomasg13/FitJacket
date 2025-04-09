@@ -5,16 +5,21 @@
 
   <ul class="list-group mt-4">
     {% for challenge in challenges %}
-      <li class="list-group-item mb-3">
-        <h5>{{ challenge.title }}</h5>
+      <li class="list-group-item mb-4 p-4 shadow-sm rounded">
+        <h4>{{ challenge.title }}</h4>
         <p>{{ challenge.description }}</p>
         <p><strong>Created by:</strong> {{ challenge.creator.username }}</p>
-        <p><strong>Dates:</strong> {{ challenge.start_date }} to {{ challenge.end_date }}</p>
+        <p><strong>Dates:</strong> {{ challenge.start_date|date:"M. j, Y" }} to {{ challenge.end_date|date:"M. j, Y" }}</p>
 
-        {% if user in challenge.participants.all %}
+        {% if user == challenge.creator %}
+          <span class="badge bg-info text-dark">You created this</span>
+        {% elif user in challenge.participants.all %}
           <span class="badge bg-success">You joined</span>
         {% else %}
-          <span class="badge bg-secondary">Not joined</span>
+          <form action="{% url 'challenge:join_challenge' challenge.id %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-primary btn-sm">Join</button>
+          </form>
         {% endif %}
       </li>
     {% empty %}
@@ -22,7 +27,6 @@
     {% endfor %}
   </ul>
 
-  <!-- Move create button to bottom -->
   <div class="text-center mt-5">
     <a href="{% url 'challenge:create_challenge' %}" class="btn btn-primary">+ Create New Challenge</a>
   </div>

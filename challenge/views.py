@@ -16,7 +16,6 @@ def create_challenge(request):
             challenge = form.save(commit=False)
             challenge.creator = request.user
             challenge.save()
-            challenge.participants.add(request.user)  # auto join
             return redirect('challenge:challenge_list')
     else:
         form = ChallengeForm()
