@@ -29,7 +29,7 @@
     appendChat("You", message);
     input.value = "";
 
-    const response = await fetch("/workouts/chatbot/    ", {
+    const response = await fetch("/workouts/chatbot/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message })
