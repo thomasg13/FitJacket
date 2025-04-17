@@ -34,6 +34,7 @@
             <a class="nav-link" href="{% url 'workouts:workout_list' %}">Workouts</a>
             <a class="nav-link" href="{% url 'goals:goals_home' %}">Goals</a>
             <a class="nav-link" href="{% url 'challenge:challenge_list' %}">Challenges</a>
+            <a class="nav-link" href="{% url 'groups:workout_groups_list' %}">Workout Groups</a>
 
             {% if user.is_authenticated %}
               <div class="nav-item dropdown">

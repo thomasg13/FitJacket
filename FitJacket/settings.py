@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'users',
     'workouts',
     'goals',
-    'challenge'
+    'challenge',
+    'groups'
 ]
 
 MIDDLEWARE = [

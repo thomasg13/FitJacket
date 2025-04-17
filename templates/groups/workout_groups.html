@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container">
+    <h2 class="mb-4">Workout Groups</h2>
+
+    <div class="row">
+      <!-- Groups the user is in -->
+      <div class="col-md-6">
+        <h3>Groups You Are In</h3>
+        {% if user_groups %}
+          <ul class="list-group mb-4">
+            {% for group in user_groups %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>{{ group.name }}</strong><br>
+                  <small>{{ group.description }}</small>
+                </div>
+                <a href="{% url 'groups:leave_group' group.id %}" class="btn btn-danger btn-sm">Leave</a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>You are not in any workout groups.</p>
+        {% endif %}
+      </div>
+
+      <!-- Groups the user can join -->
+      <div class="col-md-6">
+        <h3>Available Groups to Join</h3>
+        {% if available_groups %}
+          <ul class="list-group mb-4">
+            {% for group in available_groups %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>{{ group.name }}</strong><br>
+                  <small>{{ group.description }}</small>
+                </div>
+                <a href="{% url 'groups:join_group' group.id %}" class="btn btn-success btn-sm">Join</a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>No groups available to join at the moment.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
