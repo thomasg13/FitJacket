@@ -92,7 +92,6 @@
             </div>
         </div>
     </div>
-</div>
 
 {% block extra_js %}
 <script>
@@ -144,7 +143,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     input.id = input.id.replace(/-\d+-/, `-${index}-`);
                 }
             });
+            
+            // update any hidden inputs
+            const hiddenInputs = form.querySelectorAll('input[type="hidden"]');
+            hiddenInputs.forEach(input => {
+                if (input.name) {
+                    input.name = input.name.replace(/-\d+-/, `-${index}-`);
+                    input.id = input.id.replace(/-\d+-/, `-${index}-`);
+                }
+            });
         });
+        
+        // update he total forms count
+        totalForms.value = forms.length;
     }
 
     // toggle fields based on exercise type
@@ -244,7 +255,14 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // initialize fields visibility
         toggleExerciseFields(newForm, type);
+        
+        // make sure form is valid
         checkExercises();
+        
+        const nameInput = newForm.querySelector('input[name$="-name"]');
+        if (nameInput) {
+            nameInput.focus();
+        }
     }
     
     // add rep-based exercise button
@@ -266,6 +284,15 @@ document.addEventListener('DOMContentLoaded', function() {
             row.remove();
             updateFormIndex();
             checkExercises();
+            
+            // Update the total forms count
+            const formCount = document.querySelectorAll('.exercise-form').length;
+            totalForms.value = formCount;
+            
+            // If no exercises left, add a default one
+            if (formCount === 0) {
+                addExerciseForm('rep-based');
+            }
         }
     });
 
@@ -349,6 +376,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 </style>
-{% endblock %}
 
-{% endblock %} 
+{% endblock %}
+{% endblock %}
