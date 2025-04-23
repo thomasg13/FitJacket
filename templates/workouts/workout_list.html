@@ -33,34 +33,38 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for exercise in workout.exercises.all %}
+                                        {% for exercise in workout.repbasedexercise_set.all %}
                                             <tr>
                                                 <td class="fw-medium">{{ exercise.name }}</td>
                                                 <td>
-                                                    {% if exercise.exercise_type == 'rep-based' %}
-                                                        <span class="badge bg-light text-dark me-1">
-                                                            <i class="me-1"></i>{{ exercise.sets }}×{{ exercise.reps }} reps
+                                                    <span class="badge bg-light text-dark me-1">
+                                                        <i class="fas fa-dumbbell me-1"></i>{{ exercise.sets }}×{{ exercise.reps }} reps
+                                                    </span>
+                                                    {% if exercise.weight %}
+                                                        <span class="badge bg-light text-dark">
+                                                            <i class="fas fa-weight-hanging me-1"></i>{% if exercise.weight|floatformat:0 == exercise.weight|floatformat %}{{ exercise.weight|floatformat:0 }}{% else %}{{ exercise.weight }}{% endif %} lbs
                                                         </span>
-                                                        {% if exercise.weight %}
-                                                            <span class="badge bg-light text-dark">
-                                                                <i class="fas fa-weight-hanging me-1"></i>{% if exercise.weight|floatformat:0 == exercise.weight|floatformat %}{{ exercise.weight|floatformat:0 }}{% else %}{{ exercise.weight }}{% endif %} lbs
-                                                            </span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        {% for exercise in workout.timedexercise_set.all %}
+                                            <tr>
+                                                <td class="fw-medium">{{ exercise.name }}</td>
+                                                <td>
+                                                    <span class="badge bg-light text-dark me-1">
+                                                        <i class="fas fa-clock me-1"></i>
+                                                        {% if exercise.duration_minutes %}
+                                                            {{ exercise.duration_minutes }}m
                                                         {% endif %}
-                                                    {% else %}
-                                                        <span class="badge bg-light text-dark me-1">
-                                                            <i class="fas fa-clock me-1"></i>
-                                                            {% if exercise.duration_minutes %}
-                                                                {{ exercise.duration_minutes }}m
-                                                            {% endif %}
-                                                            {% if exercise.duration_seconds %}
-                                                                {% if exercise.duration_minutes %}{% endif %}{{ exercise.duration_seconds }}s
-                                                            {% endif %}
+                                                        {% if exercise.duration_seconds %}
+                                                            {% if exercise.duration_minutes %} {% endif %}{{ exercise.duration_seconds }}s
+                                                        {% endif %}
+                                                    </span>
+                                                    {% if exercise.weight %}
+                                                        <span class="badge bg-light text-dark">
+                                                            <i class="fas fa-weight-hanging me-1"></i>{% if exercise.weight|floatformat:0 == exercise.weight|floatformat %}{{ exercise.weight|floatformat:0 }}{% else %}{{ exercise.weight }}{% endif %} lbs
                                                         </span>
-                                                        {% if exercise.weight %}
-                                                            <span class="badge bg-light text-dark">
-                                                                <i class="fas fa-weight-hanging me-1"></i>{% if exercise.weight|floatformat:0 == exercise.weight|floatformat %}{{ exercise.weight|floatformat:0 }}{% else %}{{ exercise.weight }}{% endif %} lbs
-                                                            </span>
-                                                        {% endif %}
                                                     {% endif %}
                                                 </td>
                                             </tr>
@@ -71,7 +75,8 @@
                         </div>
                         <div class="card-footer bg-light">
                             <small class="text-muted">
-                                <i class="fas fa-dumbbell me-1"></i> {{ workout.exercises.count }} exercises
+                                <i class="fas fa-dumbbell me-1"></i> 
+                                {{ workout.repbasedexercise_set.count|add:workout.timedexercise_set.count }} exercises
                             </small>
                         </div>
                     </div>
@@ -145,5 +150,4 @@
         font-weight: 500;
     }
 </style>
-    {% include 'workouts/chatbot.html' %}
 {% endblock %}
