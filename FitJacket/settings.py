@@ -29,7 +29,7 @@ STATICFILES_DIRS = [
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-l8tt1-fnqmajwt25q!4z+tgi2gmbfdycfr-+ma-2yr+#p5cg$='
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -147,3 +147,5 @@ LOGIN_URL = 'users:login' # redirect to this if user logs into page that require
 # default redirects if next_url is not provided
 LOGIN_REDIRECT_URL = 'home:index' 
 LOGOUT_REDIRECT_URL = 'home:index'
+
+
