@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Workout
-from workouts.forms import WorkoutForm, RepBasedExerciseFormSet, TimedExerciseFormSet  # updated imports
+from .models import Workout, ExerciseFactory
+from workouts.forms import WorkoutForm, ExerciseFormFactory, RepBasedExerciseFormSet, TimedExerciseFormSet
 import logging
 from openai import OpenAI
 from django.conf import settings
@@ -12,6 +12,19 @@ import json
 
 logger = logging.getLogger(__name__)
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
+
+def create_exercises(workout, exercise_data, exercise_type):
+    """Helper function to create exercises using the factory pattern"""
+    for data in exercise_data:
+        if data.get('name'):  # Only create if there's a name
+            form = ExerciseFormFactory.create_form(
+                exercise_type=exercise_type,
+                data=data
+            )
+            if form.is_valid():
+                exercise = form.save(commit=False)
+                exercise.workout = workout
+                exercise.save()
 
 @login_required()
 def workout_list(req):
@@ -24,7 +37,7 @@ def workout_list(req):
 def create_workout(req):
     if req.method == 'POST':
         workout_form = WorkoutForm(req.POST)
-        rep_formset = RepBasedExerciseFormSet(req.POST, prefix='rep')  # separate prefixes
+        rep_formset = RepBasedExerciseFormSet(req.POST, prefix='rep')
         timed_formset = TimedExerciseFormSet(req.POST, prefix='timed')
 
         if (workout_form.is_valid() and rep_formset.is_valid()
@@ -33,10 +46,20 @@ def create_workout(req):
             workout.user = req.user
             workout.save()
 
-            # save both exercise types
-            for fs in (rep_formset, timed_formset):  # loop each strategy
-                for exercise in fs.save(commit=False):
+            # Save rep-based exercises
+            for form in rep_formset:
+                if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
+                    exercise = form.save(commit=False)
                     exercise.workout = workout
+                    exercise.exercise_type = 'rep-based'
+                    exercise.save()
+
+            # Save timed exercises
+            for form in timed_formset:
+                if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
+                    exercise = form.save(commit=False)
+                    exercise.workout = workout
+                    exercise.exercise_type = 'timed'
                     exercise.save()
 
             return redirect('workouts:workout_list')

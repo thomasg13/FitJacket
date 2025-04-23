@@ -45,6 +45,11 @@
                                                             <i class="fas fa-weight-hanging me-1"></i>{% if exercise.weight|floatformat:0 == exercise.weight|floatformat %}{{ exercise.weight|floatformat:0 }}{% else %}{{ exercise.weight }}{% endif %} lbs
                                                         </span>
                                                     {% endif %}
+                                                    {% if exercise.distance %}
+                                                        <span class="badge bg-light text-dark">
+                                                            <i class="fas fa-road me-1"></i>{% if exercise.distance|floatformat:2 == exercise.distance|floatformat %}{{ exercise.distance|floatformat:2 }}{% else %}{{ exercise.distance }}{% endif %} mi
+                                                        </span>
+                                                    {% endif %}
                                                 </td>
                                             </tr>
                                         {% endfor %}
@@ -64,6 +69,11 @@
                                                     {% if exercise.weight %}
                                                         <span class="badge bg-light text-dark">
                                                             <i class="fas fa-weight-hanging me-1"></i>{% if exercise.weight|floatformat:0 == exercise.weight|floatformat %}{{ exercise.weight|floatformat:0 }}{% else %}{{ exercise.weight }}{% endif %} lbs
+                                                        </span>
+                                                    {% endif %}
+                                                    {% if exercise.distance %}
+                                                        <span class="badge bg-light text-dark">
+                                                            <i class="fas fa-road me-1"></i>{% if exercise.distance|floatformat:2 == exercise.distance|floatformat %}{{ exercise.distance|floatformat:2 }}{% else %}{{ exercise.distance }}{% endif %} mi
                                                         </span>
                                                     {% endif %}
                                                 </td>
