@@ -1,30 +1,33 @@
 from django import forms
 from django.forms import inlineformset_factory
-
-from .models import Workout, RepBasedExercise, TimedExercise
+from .models import Workout, RepBasedExercise, TimedExercise, ExerciseFactory
 
 class WorkoutForm(forms.ModelForm):
     class Meta:
         model = Workout
         fields = ['date']
         widgets = {
-            'date': forms.DateInput(
-                attrs={'type': 'date', 'class': 'form-control'}
-            )
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
         }
-    # nothing fancy here—the user just picks a date
 
-class RepBasedExerciseForm(forms.ModelForm):
+class BaseExerciseForm(forms.ModelForm):
     class Meta:
-        model = RepBasedExercise
-        fields = ['name', 'sets', 'reps', 'weight']
+        fields = ['name', 'weight']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'sets': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
-            'reps': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
             'weight': forms.NumberInput(
                 attrs={'class': 'form-control', 'min': 0, 'step': 0.5}
             ),
+        }
+
+class RepBasedExerciseForm(BaseExerciseForm):
+    class Meta(BaseExerciseForm.Meta):
+        model = RepBasedExercise
+        fields = BaseExerciseForm.Meta.fields + ['sets', 'reps']
+        widgets = {
+            **BaseExerciseForm.Meta.widgets,
+            'sets': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
+            'reps': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
         }
 
     def save(self, commit=True):
@@ -34,26 +37,22 @@ class RepBasedExerciseForm(forms.ModelForm):
             instance.save()
         return instance
 
-class TimedExerciseForm(forms.ModelForm):
-    class Meta:
+class TimedExerciseForm(BaseExerciseForm):
+    class Meta(BaseExerciseForm.Meta):
         model = TimedExercise
-        fields = ['name', 'duration_minutes', 'duration_seconds', 'weight']
+        fields = BaseExerciseForm.Meta.fields + ['duration_minutes', 'duration_seconds']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            **BaseExerciseForm.Meta.widgets,
             'duration_minutes': forms.NumberInput(
                 attrs={'class': 'form-control', 'min': 0}
             ),
             'duration_seconds': forms.NumberInput(
                 attrs={'class': 'form-control', 'min': 0, 'max': 59}
             ),
-            'weight': forms.NumberInput(
-                attrs={'class': 'form-control', 'min': 0, 'step': 0.5}
-            ),
         }
 
     def clean(self):
         cleaned = super().clean()
-        # gotta have at least one timing field
         if not (cleaned.get('duration_minutes') or cleaned.get('duration_seconds')):
             raise forms.ValidationError(
                 "Set minutes or seconds for a timed exercise."
@@ -67,7 +66,16 @@ class TimedExerciseForm(forms.ModelForm):
             instance.save()
         return instance
 
-# two inline formsets—one for each concrete strategy
+class ExerciseFormFactory:
+    @staticmethod
+    def create_form(exercise_type, **kwargs):
+        if exercise_type == 'rep-based':
+            return RepBasedExerciseForm(**kwargs)
+        elif exercise_type == 'timed':
+            return TimedExerciseForm(**kwargs)
+        else:
+            raise ValueError(f"Invalid exercise type: {exercise_type}")
+
 RepBasedExerciseFormSet = inlineformset_factory(
     Workout,
     RepBasedExercise,
