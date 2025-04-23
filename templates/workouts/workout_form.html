@@ -9,6 +9,24 @@
                     <h2 class="text-center">Create New Workout</h2>
                 </div>
                 <div class="card-body">
+                    <!-- Strava Button -->
+                    <div class="text-center mb-4">
+                        {% if user.stravaaccount %}
+                            <button type="button" class="btn btn-strava" id="import-strava">
+                                <i class="fab fa-strava me-2"></i>Import Latest Strava Workout
+                            </button>
+                        {% else %}
+                            <a href="{% url 'workouts:strava_connect' %}" class="btn btn-strava">
+                                <i class="fab fa-strava me-2"></i>Connect with Strava
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="text-center mb-4">
+                        <span class="divider-text">or create manually</span>
+                    </div>
+
                     <form method="post" id="workout-form">
                         {% csrf_token %}
 
@@ -270,6 +288,39 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please fill in all required fields for each exercise.');
         }
     });
+
+    // Add Strava import functionality
+    const importStravaBtn = document.getElementById('import-strava');
+    if (importStravaBtn) {
+        importStravaBtn.addEventListener('click', function() {
+            importStravaBtn.disabled = true;
+            importStravaBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Importing...';
+
+            fetch('{% url "workouts:strava_import" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '{% url "workouts:workout_list" %}';
+                } else {
+                    alert(data.error || 'Failed to import workout');
+                    importStravaBtn.disabled = false;
+                    importStravaBtn.innerHTML = '<i class="fab fa-strava me-2"></i>Import Latest Strava Workout';
+                }
+            })
+            .catch(error => {
+                console.error('Network error:', error);
+                alert('Failed to import workout. Please try again.');
+                importStravaBtn.disabled = false;
+                importStravaBtn.innerHTML = '<i class="fab fa-strava me-2"></i>Import Latest Strava Workout';
+            });
+        });
+    }
 });
 </script>
 
@@ -308,6 +359,50 @@ document.addEventListener('DOMContentLoaded', function() {
         .table-responsive {
             overflow-x: auto;
         }
+    }
+
+    .btn-strava {
+        background-color: #FC4C02;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        font-weight: 500;
+    }
+
+    .btn-strava:hover {
+        background-color: #E34402;
+        color: white;
+    }
+
+    .btn-strava:disabled {
+        background-color: #FC4C02;
+        opacity: 0.7;
+    }
+
+    .divider-text {
+        position: relative;
+        display: inline-block;
+        padding: 0 10px;
+        color: #6c757d;
+        background: white;
+    }
+
+    .divider-text::before,
+    .divider-text::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 100px;
+        height: 1px;
+        background-color: #dee2e6;
+    }
+
+    .divider-text::before {
+        right: 100%;
+    }
+
+    .divider-text::after {
+        left: 100%;
     }
 </style>
 {% endblock %}
