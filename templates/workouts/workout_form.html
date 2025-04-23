@@ -11,7 +11,7 @@
                 <div class="card-body">
                     <form method="post" id="workout-form">
                         {% csrf_token %}
-                        
+
                         <!-- Workout Date -->
                         <div class="mb-3">
                             <label for="id_date" class="form-label">Workout Date</label>
@@ -29,36 +29,85 @@
                         <h4 class="mb-3">Exercises</h4>
                         <div class="table-responsive">
                             <table class="table">
-                                {{ formset.management_form }}
+                                {{ rep_formset.management_form }}
+                                {{ timed_formset.management_form }}
                                 <tbody id="exercise-forms">
-                                    {% for form in formset %}
-                                        <tr class="exercise-form">
+                                    <!-- Rep-based exercises -->
+                                    {% for form in rep_formset %}
+                                        <tr class="exercise-form rep-based-form">
                                             <td>
                                                 <label for="{{ form.name.id_for_label }}" class="form-label">Exercise Name</label>
                                                 {{ form.name }}
+                                                {% if form.name.errors %}
+                                                    <div class="invalid-feedback d-block">{{ form.name.errors }}</div>
+                                                {% endif %}
                                             </td>
                                             <td class="rep-based-field">
                                                 <label for="{{ form.sets.id_for_label }}" class="form-label">Sets</label>
                                                 {{ form.sets }}
+                                                {% if form.sets.errors %}
+                                                    <div class="invalid-feedback d-block">{{ form.sets.errors }}</div>
+                                                {% endif %}
                                             </td>
                                             <td class="rep-based-field">
                                                 <label for="{{ form.reps.id_for_label }}" class="form-label">Reps</label>
                                                 {{ form.reps }}
-                                            </td>
-                                            <td class="timed-field">
-                                                <label for="{{ form.duration_minutes.id_for_label }}" class="form-label">Minutes</label>
-                                                {{ form.duration_minutes }}
-                                            </td>
-                                            <td class="timed-field">
-                                                <label for="{{ form.duration_seconds.id_for_label }}" class="form-label">Seconds</label>
-                                                {{ form.duration_seconds }}
+                                                {% if form.reps.errors %}
+                                                    <div class="invalid-feedback d-block">{{ form.reps.errors }}</div>
+                                                {% endif %}
                                             </td>
                                             <td>
-                                                <label for="{{ form.weight.id_for_label }}" class="form-label">Weight (lbs)</label>
+                                                <label for="{{ form.weight.id_for_label }}" class="form-label">lbs (opt.)</label>
                                                 {{ form.weight }}
+                                                {% if form.weight.errors %}
+                                                    <div class="invalid-feedback d-block">{{ form.weight.errors }}</div>
+                                                {% endif %}
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-link text-dark delete-exercise" title="Delete exercise" style="position: relative; top: 1.5rem;">
+                                                <button type="button" class="btn btn-link text-danger delete-exercise" title="Delete exercise" style="position: relative; top: 1.5rem;">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    
+                                    <!-- Timed exercises -->
+                                    {% for form in timed_formset %}
+                                        <tr class="exercise-form timed-form">
+                                            <td>
+                                                <label for="{{ form.name.id_for_label }}" class="form-label">Exercise Name</label>
+                                                {{ form.name }}
+                                                {% if form.name.errors %}
+                                                    <div class="invalid-feedback d-block">{{ form.name.errors }}</div>
+                                                {% endif %}
+                                            </td>
+                                            <td class="timed-field" colspan="2">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <label for="{{ form.duration_minutes.id_for_label }}" class="form-label">Minutes</label>
+                                                        {{ form.duration_minutes }}
+                                                        {% if form.duration_minutes.errors %}
+                                                            <div class="invalid-feedback d-block">{{ form.duration_minutes.errors }}</div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="col">
+                                                        <label for="{{ form.duration_seconds.id_for_label }}" class="form-label">Seconds</label>
+                                                        {{ form.duration_seconds }}
+                                                        {% if form.duration_seconds.errors %}
+                                                            <div class="invalid-feedback d-block">{{ form.duration_seconds.errors }}</div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <label for="{{ form.weight.id_for_label }}" class="form-label">lbs (opt.)</label>
+                                                {{ form.weight }}
+                                                {% if form.weight.errors %}
+                                                    <div class="invalid-feedback d-block">{{ form.weight.errors }}</div>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-link text-danger delete-exercise" title="Delete exercise" style="position: relative; top: 1.5rem;">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </td>
@@ -92,61 +141,37 @@
             </div>
         </div>
     </div>
+</div>
 
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const addRepBasedButton = document.getElementById('add-rep-based-exercise');
     const addTimedButton = document.getElementById('add-timed-exercise');
-    const totalForms = document.getElementById('id_exercises-TOTAL_FORMS');
+    const repTotalForms = document.getElementById('id_rep-TOTAL_FORMS');
+    const timedTotalForms = document.getElementById('id_timed-TOTAL_FORMS');
     const exerciseForms = document.getElementById('exercise-forms');
-    const emptyForm = document.querySelector('.exercise-form').cloneNode(true);
-    const submitButton = document.getElementById('submit-workout');
-    const workoutForm = document.getElementById('workout-form');
     
-    // Clear the empty form
-    const inputs = emptyForm.querySelectorAll('input');
-    inputs.forEach(input => {
-        input.value = '';
-        input.checked = false;
-    });
+    // Get empty form templates
+    const emptyRepForm = document.querySelector('.rep-based-form')?.cloneNode(true);
+    const emptyTimedForm = document.querySelector('.timed-form')?.cloneNode(true);
     
-    // create hidden input for exercise type
-    function createHiddenTypeInput(form, type) {
-        // remove any existing hidden type inputs
-        const existingInputs = form.querySelectorAll('input[name$="-exercise_type"]');
-        existingInputs.forEach(input => input.remove());
-        
-        // create new hidden input
-        const formIndex = form.querySelector('input[name$="-name"]').name.match(/-\d+-/)[0];
-        const typeInput = document.createElement('input');
-        typeInput.type = 'hidden';
-        typeInput.name = `exercises${formIndex}exercise_type`;
-        typeInput.id = `id_exercises${formIndex}exercise_type`;
-        typeInput.value = type;
-        
-        // add hidden input to form
-        form.appendChild(typeInput);
-        
-        console.log('Created hidden type input:', typeInput);
-        return typeInput;
-    }
-    
-    // update form index
-    function updateFormIndex() {
-        const forms = document.querySelectorAll('.exercise-form');
-        forms.forEach((form, index) => {
-            const inputs = form.querySelectorAll('input, select');
-            inputs.forEach(input => {
-                if (input.name) {
-                    input.name = input.name.replace(/-\d+-/, `-${index}-`);
-                    input.id = input.id.replace(/-\d+-/, `-${index}-`);
-                }
+    // Clear templates
+    [emptyRepForm, emptyTimedForm].forEach(template => {
+        if (template) {
+            template.querySelectorAll('input').forEach(input => {
+                input.value = '';
+                input.checked = false;
             });
-            
-            // update any hidden inputs
-            const hiddenInputs = form.querySelectorAll('input[type="hidden"]');
-            hiddenInputs.forEach(input => {
+        }
+    });
+
+    function updateFormIndices(prefix) {
+        const forms = document.querySelectorAll(`.${prefix}-form`);
+        const totalForms = prefix === 'rep-based' ? repTotalForms : timedTotalForms;
+        
+        forms.forEach((form, index) => {
+            form.querySelectorAll('input, select').forEach(input => {
                 if (input.name) {
                     input.name = input.name.replace(/-\d+-/, `-${index}-`);
                     input.id = input.id.replace(/-\d+-/, `-${index}-`);
@@ -154,228 +179,115 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
         
-        // update he total forms count
         totalForms.value = forms.length;
     }
 
-    // toggle fields based on exercise type
-    function toggleExerciseFields(row, type) {
-        console.log('Toggling fields for type:', type);
-        
-        const repBasedFields = row.querySelectorAll('.rep-based-field');
-        const timedFields = row.querySelectorAll('.timed-field');
-        const weightField = row.querySelector('td:nth-child(6)'); // weight field is in the 6th column
-        
-        if (type === 'rep-based') {
-            console.log('Showing rep-based fields');
-            repBasedFields.forEach(field => {
-                field.style.display = 'table-cell';
-                console.log('Rep-based field:', field);
-            });
-            timedFields.forEach(field => {
-                field.style.display = 'none';
-                console.log('Hiding timed field:', field);
-            });
-        } else if (type === 'timed') {
-            console.log('Showing timed fields');
-            repBasedFields.forEach(field => {
-                field.style.display = 'none';
-                console.log('Hiding rep-based field:', field);
-            });
-            timedFields.forEach(field => {
-                field.style.display = 'table-cell';
-                console.log('Timed field:', field);
-            });
-        } else {
-            console.log('Unknown exercise type:', type);
-        }
-    }
-
-    // validate inputs for exercise
-    function validateExerciseForm(form) {
-        const nameInput = form.querySelector('input[name$="-name"]');
-        const typeInput = form.querySelector('input[name$="-exercise_type"]');
-        
-        if (!nameInput.value.trim()) {
-            return false;
-        }
-        
-        if (typeInput.value === 'rep-based') {
-            const setsInput = form.querySelector('input[name$="-sets"]');
-            const repsInput = form.querySelector('input[name$="-reps"]');
-            
-            return setsInput.value && setsInput.value > 0 && 
-                   repsInput.value && repsInput.value > 0;
-        } else {
-            const minutesInput = form.querySelector('input[name$="-duration_minutes"]');
-            const secondsInput = form.querySelector('input[name$="-duration_seconds"]');
-            
-            return (minutesInput.value && minutesInput.value >= 0) || 
-                   (secondsInput.value && secondsInput.value >= 0 && secondsInput.value < 60);
-        }
-    }
-
-    // validate all exercises (if any)
-    function checkExercises() {
-        const forms = document.querySelectorAll('.exercise-form');
-        const hasValidExercises = Array.from(forms).some(form => {
-            const nameInput = form.querySelector('input[name$="-name"]');
-            return nameInput && nameInput.value.trim() !== '';
-        });
-        
-        let allFieldsComplete = true;
-        forms.forEach(form => {
-            if (!validateExerciseForm(form)) {
-                allFieldsComplete = false;
-            }
-        });
-        
-        // enable submit button only if all exercises valid
-        submitButton.disabled = !(hasValidExercises && allFieldsComplete);
-    }
-    
     function addExerciseForm(type) {
-        const newForm = emptyForm.cloneNode(true);
-        const formCount = document.querySelectorAll('.exercise-form').length;
-        
-        // update form index
-        const inputs = newForm.querySelectorAll('input, select');
-        inputs.forEach(input => {
+        const template = type === 'rep-based' ? emptyRepForm : emptyTimedForm;
+        if (!template) return;
+
+        const newForm = template.cloneNode(true);
+        const formCount = document.querySelectorAll(`.${type}-form`).length;
+        const prefix = type === 'rep-based' ? 'rep' : 'timed';
+
+        // Update form indices
+        newForm.querySelectorAll('input, select').forEach(input => {
             if (input.name) {
                 input.name = input.name.replace(/-\d+-/, `-${formCount}-`);
                 input.id = input.id.replace(/-\d+-/, `-${formCount}-`);
             }
         });
-        
+
         exerciseForms.appendChild(newForm);
-        totalForms.value = formCount + 1;
         
-        // create hidden type input and set exercise type
-        createHiddenTypeInput(newForm, type);
-        
-        // initialize fields visibility
-        toggleExerciseFields(newForm, type);
-        
-        // make sure form is valid
-        checkExercises();
-        
+        // Update total forms count
+        const totalForms = type === 'rep-based' ? repTotalForms : timedTotalForms;
+        totalForms.value = parseInt(totalForms.value) + 1;
+
+        // Focus on name field
         const nameInput = newForm.querySelector('input[name$="-name"]');
         if (nameInput) {
             nameInput.focus();
         }
     }
-    
-    // add rep-based exercise button
-    addRepBasedButton.addEventListener('click', function() {
-        console.log('Adding rep-based exercise');
-        addExerciseForm('rep-based');
-    });
-    
-    // add timed exercise button
-    addTimedButton.addEventListener('click', function() {
-        console.log('Adding timed exercise');
-        addExerciseForm('timed');
-    });
 
-    // delete exercise
-    document.getElementById('exercise-forms').addEventListener('click', function(e) {
+    // Add exercise buttons
+    addRepBasedButton.addEventListener('click', () => addExerciseForm('rep-based'));
+    addTimedButton.addEventListener('click', () => addExerciseForm('timed'));
+
+    // Delete exercise
+    exerciseForms.addEventListener('click', function(e) {
         if (e.target.closest('.delete-exercise')) {
             const row = e.target.closest('tr');
+            const type = row.classList.contains('rep-based-form') ? 'rep-based' : 'timed';
             row.remove();
-            updateFormIndex();
-            checkExercises();
-            
-            // Update the total forms count
-            const formCount = document.querySelectorAll('.exercise-form').length;
-            totalForms.value = formCount;
-            
-            // If no exercises left, add a default one
-            if (formCount === 0) {
-                addExerciseForm('rep-based');
-            }
+            updateFormIndices(type);
         }
     });
 
-    // add event listeners to all exercise fields
-    document.getElementById('exercise-forms').addEventListener('input', function(e) {
-        if (e.target.matches('input[name$="-name"], input[name$="-sets"], input[name$="-reps"], input[name$="-duration_minutes"], input[name$="-duration_seconds"]')) {
-            checkExercises();
-        }
-    });
-
-    // initialize all exercise forms
-    document.querySelectorAll('.exercise-form').forEach(row => {
-        // create hidden type input for existing forms
-        const typeInput = createHiddenTypeInput(row, 'rep-based');
-        
-        // initialize fields visibility
-        toggleExerciseFields(row, typeInput.value);
-    });
-
-    // Add workout form submission debugging
-    workoutForm.addEventListener('submit', function(e) {
-        console.log('Form submitted');
-        console.log('Total forms:', totalForms.value);
-        
-        // check if workoutform is valid
-        const forms = document.querySelectorAll('.exercise-form');
+    // Form validation
+    document.getElementById('workout-form').addEventListener('submit', function(e) {
         let isValid = true;
-        forms.forEach(form => {
-            if (!validateExerciseForm(form)) {
+
+        // Validate rep-based exercises
+        document.querySelectorAll('.rep-based-form').forEach(form => {
+            const name = form.querySelector('input[name$="-name"]').value.trim();
+            const sets = form.querySelector('input[name$="-sets"]').value;
+            const reps = form.querySelector('input[name$="-reps"]').value;
+
+            if (!name || !sets || !reps) {
                 isValid = false;
-                console.log('Invalid form found');
             }
         });
-        
+
+        // Validate timed exercises
+        document.querySelectorAll('.timed-form').forEach(form => {
+            const name = form.querySelector('input[name$="-name"]').value.trim();
+            const minutes = form.querySelector('input[name$="-duration_minutes"]').value;
+            const seconds = form.querySelector('input[name$="-duration_seconds"]').value;
+
+            if (!name || (!minutes && !seconds)) {
+                isValid = false;
+            }
+        });
+
         if (!isValid) {
-            console.log('Form validation failed');
             e.preventDefault();
+            alert('Please fill in all required fields for each exercise.');
         }
     });
-
-    checkExercises();
 });
 </script>
 
 <style>
-    /* show rep-based fields by default */
-    .rep-based-field {
-        display: table-cell;
-    }
-    
-    .timed-field {
+    .rep-based-form .timed-field,
+    .timed-form .rep-based-field {
         display: none;
     }
-    
-    /* make sure weight field is always visible */
-    .exercise-form td:nth-child(6) {
-        display: table-cell !important;
-    }
-    
+
     .exercise-form .form-label {
         font-size: 0.8rem;
         margin-bottom: 0.2rem;
         color: #6c757d;
     }
-    
+
     .exercise-form input {
         width: 100%;
     }
-    
+
     .exercise-form td {
         min-width: 100px;
     }
-    
+
     .exercise-form td:last-child {
         vertical-align: middle;
     }
-    
+
     @media (max-width: 768px) {
         .table-responsive {
             overflow-x: auto;
         }
     }
 </style>
-
 {% endblock %}
 {% endblock %}

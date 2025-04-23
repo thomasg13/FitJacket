@@ -26,12 +26,18 @@ class RepBasedExerciseForm(forms.ModelForm):
                 attrs={'class': 'form-control', 'min': 0, 'step': 0.5}
             ),
         }
-    # no need for a custom __init__; fields map 1:1 with the model
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.exercise_type = 'rep-based'
+        if commit:
+            instance.save()
+        return instance
 
 class TimedExerciseForm(forms.ModelForm):
     class Meta:
         model = TimedExercise
-        fields = ['name', 'duration_minutes', 'duration_seconds']
+        fields = ['name', 'duration_minutes', 'duration_seconds', 'weight']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'duration_minutes': forms.NumberInput(
@@ -39,6 +45,9 @@ class TimedExerciseForm(forms.ModelForm):
             ),
             'duration_seconds': forms.NumberInput(
                 attrs={'class': 'form-control', 'min': 0, 'max': 59}
+            ),
+            'weight': forms.NumberInput(
+                attrs={'class': 'form-control', 'min': 0, 'step': 0.5}
             ),
         }
 
@@ -50,6 +59,13 @@ class TimedExerciseForm(forms.ModelForm):
                 "Set minutes or seconds for a timed exercise."
             )
         return cleaned
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.exercise_type = 'timed'
+        if commit:
+            instance.save()
+        return instance
 
 # two inline formsets—one for each concrete strategy
 RepBasedExerciseFormSet = inlineformset_factory(

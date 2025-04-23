@@ -6,28 +6,26 @@ class Workout(models.Model):
     date = models.DateField()
 
 class Exercise(models.Model):
+    EXERCISE_TYPES = [
+        ('rep-based', 'Rep-based'),
+        ('timed', 'Timed')
+    ]
+    
     workout = models.ForeignKey(Workout, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-
-    class Meta:
-        abstract = True  # no table for this—just holds shared fields
-
-    @property
-    def exercise_type(self):
-        raise NotImplementedError  # each subclass defines its own type
-
-class RepBasedExercise(Exercise):
-    sets = models.PositiveIntegerField()
-    reps = models.PositiveIntegerField()
+    exercise_type = models.CharField(max_length=20, choices=EXERCISE_TYPES)
     weight = models.DecimalField(
         max_digits=5, decimal_places=2,
         null=True, blank=True,
         help_text="weight in pounds"
     )
 
-    @property
-    def exercise_type(self):
-        return 'rep-based'
+    class Meta:
+        abstract = True  # no table for this—just holds shared fields
+
+class RepBasedExercise(Exercise):
+    sets = models.PositiveIntegerField()
+    reps = models.PositiveIntegerField()
 
     def clean(self):
         from django.core.exceptions import ValidationError
@@ -37,9 +35,6 @@ class RepBasedExercise(Exercise):
 class TimedExercise(Exercise):
     duration_minutes = models.PositiveIntegerField(null=True, blank=True)
     duration_seconds = models.PositiveIntegerField(null=True, blank=True)
-    @property
-    def exercise_type(self):
-        return 'timed'
 
     def clean(self):
         from django.core.exceptions import ValidationError
