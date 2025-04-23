@@ -20,6 +20,11 @@ class Exercise(models.Model):
         null=True, blank=True,
         help_text="weight in pounds"
     )
+    distance = models.DecimalField(
+        max_digits=7, decimal_places=3,
+        null=True, blank=True,
+        help_text="distance in miles"
+    )
 
     class Meta:
         abstract = True  # no table for this—just holds shared fields

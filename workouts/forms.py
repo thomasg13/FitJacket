@@ -12,11 +12,14 @@ class WorkoutForm(forms.ModelForm):
 
 class BaseExerciseForm(forms.ModelForm):
     class Meta:
-        fields = ['name', 'weight']
+        fields = ['name', 'weight', 'distance']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'weight': forms.NumberInput(
                 attrs={'class': 'form-control', 'min': 0, 'step': 0.5}
+            ),
+            'distance': forms.NumberInput(
+                attrs={'class': 'form-control', 'min': 0, 'step': 0.01}
             ),
         }
 
