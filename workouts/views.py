@@ -172,6 +172,7 @@ def create_workout(req):
             for form in rep_formset:
                 if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
                     data = form.cleaned_data.copy()
+                    data.pop('DELETE', None)  # Remove DELETE field
                     data['workout'] = workout
                     exercise = ExerciseFactory.create_exercise('rep-based', **data)
                     exercise.save()
@@ -180,6 +181,7 @@ def create_workout(req):
             for form in timed_formset:
                 if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
                     data = form.cleaned_data.copy()
+                    data.pop('DELETE', None)  # Remove DELETE field
                     data['workout'] = workout
                     exercise = ExerciseFactory.create_exercise('timed', **data)
                     exercise.save()
