@@ -1,0 +1,337 @@
+<!-- chatbot.html -->
+<!-- Toggle Button -->
+<div class="chatbot">
+  <header>
+    <h2>FitBot</h2>
+    <span class="close-btn material-symbols-outlined" onclick="toggleChat()">close</span>
+  </header>
+
+  <!-- This is the actual chat scroll area -->
+  <ul class="chatbox" id="chat-log">
+    <li class="chat incoming">
+      <span class="material-symbols-outlined">smart_toy</span>
+      <p>Hi there, I am your fitness coach<br>How can I help you today?</p>
+    </li>
+  </ul>
+
+  <!-- Chat input -->
+  <div class="chat-input">
+    <textarea id="chat-message" placeholder="Ask FitBot..." spellcheck="false" required></textarea>
+    <span id="send-btn" class="material-symbols-rounded" onclick="sendChat()">send</span>
+  </div>
+</div>
+<button id="new-chat-btn" class="new-chat-btn" onclick="startNewChat()">Start New Chat</button>
+
+<!-- Chatbot Window -->
+<button class="chatbot-toggler" onclick="toggleChat()">
+  <span class="material-symbols-rounded">mode_comment</span>
+  <span class="material-symbols-outlined">close</span>
+</button>
+
+<!-- Material Icon Fonts -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" />
+
+<!-- Embedded CSS -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+body {
+  {#background: #E3F2FD;#}
+}
+.chatbot-toggler {
+  position: fixed;
+  bottom: 100px;
+  right: 35px;
+  outline: none;
+  border: none;
+  height: 50px;
+  width: 50px;
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #724ae8;
+  transition: all 0.2s ease;
+}
+body.show-chatbot .chatbot-toggler {
+    opacity:1;
+    pointer-events: auto;
+  transform: rotate(90deg);
+}
+.chatbot-toggler span {
+  color: #fff;
+  position: absolute;
+}
+.chatbot-toggler span:last-child,
+body.show-chatbot .chatbot-toggler span:first-child  {
+  opacity: 0;
+}
+body.show-chatbot .chatbot-toggler span:last-child {
+  opacity: 1;
+}
+.new-chat-btn{
+    position: fixed;
+  bottom: 105px; /* adjust so it sits above the toggle */
+  right: 100px;
+  background: #ffffff;
+  color: #724ae8;
+  border: 2px solid #724ae8;
+  border-radius: 25px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: none;
+  z-index: 9999;
+}
+body.show-chatbot #new-chat-btn{
+    display:block;
+}
+.chatbot {
+  position: fixed;
+  right: 35px;
+  bottom: 160px;
+  width: 420px;
+  background: #fff;
+  border-radius: 15px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.5);
+  transform-origin: bottom right;
+  box-shadow: 0 0 128px 0 rgba(0,0,0,0.1),
+              0 32px 64px -48px rgba(0,0,0,0.5);
+  transition: all 0.1s ease;
+}
+body.show-chatbot .chatbot {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+.chatbot header {
+  padding: 16px 0;
+  position: relative;
+  text-align: center;
+  color: #fff;
+  background: #724ae8;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.chatbot header span {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  display: none;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+header h2 {
+  font-size: 1.4rem;
+}
+.chatbot .chatbox {
+  overflow-y: auto;
+  height: 510px;
+  padding: 30px 20px 100px;
+}
+.chatbot :where(.chatbox, textarea)::-webkit-scrollbar {
+  width: 6px;
+}
+.chatbot :where(.chatbox, textarea)::-webkit-scrollbar-track {
+  background: #fff;
+  border-radius: 25px;
+}
+.chatbot :where(.chatbox, textarea)::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 25px;
+}
+.chatbox .chat {
+  display: flex;
+  list-style: none;
+}
+.chatbox .outgoing {
+  margin: 20px 0;
+  justify-content: flex-end;
+}
+.chatbox .incoming span {
+  width: 32px;
+  height: 32px;
+  color: #fff;
+  cursor: default;
+  text-align: center;
+  line-height: 32px;
+  align-self: flex-end;
+  background: #724ae8;
+  border-radius: 4px;
+  margin: 0 10px 7px 0;
+}
+.chatbox .chat p {
+  white-space: pre-wrap;
+  padding: 12px 16px;
+  border-radius: 10px 10px 0 10px;
+  max-width: 75%;
+  color: #fff;
+  font-size: 0.95rem;
+  background: #724ae8;
+}
+.chatbox .incoming p {
+  border-radius: 10px 10px 10px 0;
+}
+.chatbox .chat p.error {
+  color: #721c24;
+  background: #f8d7da;
+}
+.chatbox .incoming p {
+  color: #000;
+  background: #f2f2f2;
+}
+.chatbot .chat-input {
+  display: flex;
+  gap: 5px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: #fff;
+  padding: 3px 20px;
+  border-top: 1px solid #ddd;
+}
+.chat-input textarea {
+  height: 55px;
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  max-height: 180px;
+  padding: 15px 15px 15px 0;
+  font-size: 0.95rem;
+}
+.chat-input span {
+  align-self: flex-end;
+  color: #724ae8;
+  cursor: pointer;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  visibility: hidden;
+  font-size: 1.35rem;
+}
+.chat-input textarea:valid ~ span {
+  visibility: visible;
+}
+@media (max-width: 490px) {
+  .chatbot-toggler {
+    right: 20px;
+    bottom: 20px;
+  }
+  .chatbot {
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    border-radius: 0;
+    width: 100%;
+  }
+  .chatbot .chatbox {
+    height: 90%;
+    padding: 25px 15px 100px;
+  }
+  .chatbot .chat-input {
+    padding: 5px 15px;
+  }
+  .chatbot header span {
+    display: block;
+  }
+}
+</style>
+
+<!-- Embedded JavaScript -->
+<script>
+function toggleChat() {
+  const chat = document.querySelector(".chatbot");
+  const body = document.body;
+
+  if (body.classList.contains("show-chatbot")) {
+    body.classList.remove("show-chatbot");
+  } else {
+    body.classList.add("show-chatbot");
+    setTimeout(() => {
+      document.getElementById("chat-message").focus();
+    }, 100);
+  }
+}
+
+async function sendChat() {
+  const input = document.getElementById("chat-message");
+  const message = input.value.trim();
+  if (!message) return;
+
+  appendChat("You", message, "outgoing");
+  input.value = "";
+
+  try {
+    const response = await fetch("/workouts/chatbot/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message })
+    });
+
+    const data = await response.json();
+    appendChat("FitBot", data.reply, "incoming");
+  } catch (error) {
+    appendChat("Error", "Network error. Please try again.", "incoming");
+  }
+}
+
+function appendChat(sender, text, type) {
+  const log = document.getElementById("chat-log");
+  const li = document.createElement("li");
+  li.className = `chat ${type}`;
+
+  if (type === "incoming") {
+    li.innerHTML = `<span class="material-symbols-outlined">smart_toy</span><p>${text}</p>`;
+  } else {
+    li.innerHTML = `<p>${text}</p>`;
+  }
+
+  log.appendChild(li);
+  log.scrollTop = log.scrollHeight;
+}
+
+function startNewChat() {
+  const log = document.getElementById("chat-log");
+
+  // Clear all previous messages
+  log.innerHTML = "";
+
+  // Add welcome message again
+  const welcomeMessage = document.createElement("li");
+  welcomeMessage.className = "chat incoming";
+  welcomeMessage.innerHTML = `
+    <span class="material-symbols-outlined">smart_toy</span>
+    <p>Hi there, I am your fitness coach<br>How can I help you today?</p>
+  `;
+  log.appendChild(welcomeMessage);
+
+  // Reset the scroll
+  log.scrollTop = log.scrollHeight;
+}
+
+
+// Enable "Enter" key to send message
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("chat-message");
+  const sendBtn = document.getElementById("send-btn");
+
+  sendBtn?.addEventListener("click", sendChat);
+  input?.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendChat();
+    }
+  });
+});
+</script>
