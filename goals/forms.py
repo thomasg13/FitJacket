@@ -4,9 +4,10 @@ from .models import FitnessGoal
 class FitnessGoalForm(forms.ModelForm):
     class Meta:
         model = FitnessGoal
-        fields = ['water_intake', 'steps', 'calories']
+        fields = ['weekly_miles_goal', 'weekly_workout_days_goal', 'daily_steps', 'daily_calories']
         widgets = {
-            'water_intake': forms.NumberInput(attrs={'class': 'form-control'}),
-            'steps': forms.NumberInput(attrs={'class': 'form-control'}),
-            'calories': forms.NumberInput(attrs={'class': 'form-control'}),
+            'weekly_miles_goal': forms.NumberInput(attrs={'class': 'form-control'}),
+            'weekly_workout_days_goal': forms.NumberInput(attrs={'class': 'form-control'}),
+            'daily_steps': forms.NumberInput(attrs={'class': 'form-control'}),
+            'daily_calories': forms.NumberInput(attrs={'class': 'form-control'}),
         }
