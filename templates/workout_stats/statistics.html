@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- This Week's Progress -->
+    <h2 class="mb-4">This Week's Progress</h2>
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">This Week's Workout Days</h5>
+                    <h3>{{ this_week_days }} / {{ goal.weekly_workout_days_goal }} days</h3>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" 
+                             style="width: {{ days_progress }}%" 
+                             aria-valuenow="{{ days_progress }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            {{ days_progress }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">This Week's Miles</h5>
+                    <h3>{{ this_week_miles }} / {{ goal.weekly_miles_goal }} miles</h3>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" 
+                             style="width: {{ miles_progress }}%" 
+                             aria-valuenow="{{ miles_progress }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            {{ miles_progress }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="mb-4">Historical Statistics</h2>
+
+    <!-- Weekly Workout Days Chart -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Workout Days per Week</h5>
+            <canvas id="workoutDaysChart" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Weekly Distance Chart -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Miles per Week</h5>
+            <canvas id="distanceChart" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Workout Days Chart
+    const workoutDaysCtx = document.getElementById('workoutDaysChart').getContext('2d');
+    new Chart(workoutDaysCtx, {
+        type: 'line',
+        data: {
+            labels: {{ dates|safe }},
+            datasets: [{
+                label: 'Days Worked Out',
+                data: {{ workout_days|safe }},
+                borderColor: '#007bff',
+                tension: 0.1,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 7,
+                    ticks: {
+                        stepSize: 1
+                    }
+                },
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
+        }
+    });
+
+    // Distance Chart
+    const distanceCtx = document.getElementById('distanceChart').getContext('2d');
+    new Chart(distanceCtx, {
+        type: 'line',
+        data: {
+            labels: {{ dates|safe }},
+            datasets: [{
+                label: 'Miles',
+                data: {{ total_miles|safe }},
+                borderColor: '#28a745',
+                tension: 0.1,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                },
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %} 

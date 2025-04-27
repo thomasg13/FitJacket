@@ -7,24 +7,29 @@
   <form method="POST" class="mb-4">
     {% csrf_token %}
     <div class="mb-3">
-      <label for="id_water_intake" class="form-label">Water Intake (oz)</label>
-      {{ form.water_intake }}
+      <label for="id_weekly_miles_goal" class="form-label">Weekly Miles Goal</label>
+      {{ form.weekly_miles_goal }}
     </div>
     <div class="mb-3">
-      <label for="id_steps" class="form-label">Daily Steps</label>
-      {{ form.steps }}
+      <label for="id_weekly_workout_days_goal" class="form-label">Weekly Workout Days Goal</label>
+      {{ form.weekly_workout_days_goal }}
     </div>
     <div class="mb-3">
-      <label for="id_calories" class="form-label">Daily Calories</label>
-      {{ form.calories }}
+      <label for="id_daily_steps" class="form-label">Daily Steps</label>
+      {{ form.daily_steps }}
+    </div>
+    <div class="mb-3">
+      <label for="id_daily_calories" class="form-label">Daily Calories</label>
+      {{ form.daily_calories }}
     </div>
     <button type="submit" class="btn btn-primary">Save Goals</button>
   </form>
 
   <div class="alert alert-info">
-    <p><strong>Water:</strong> {{ goal.water_intake }} oz/day</p>
-    <p><strong>Steps:</strong> {{ goal.steps }} per day</p>
-    <p><strong>Calories:</strong> {{ goal.calories }} kcal/day</p>
+    <p><strong>Weekly Miles Goal:</strong> {{ goal.weekly_miles_goal }} miles</p>
+    <p><strong>Weekly Workout Days:</strong> {{ goal.weekly_workout_days_goal }} days</p>
+    <p><strong>Daily Steps:</strong> {{ goal.daily_steps }} per day</p>
+    <p><strong>Daily Calories:</strong> {{ goal.daily_calories }} kcal/day</p>
   </div>
 </div>
 {% endblock %}

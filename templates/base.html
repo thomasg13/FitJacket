@@ -35,6 +35,7 @@
             <a class="nav-link" href="{% url 'goals:goals_home' %}">Goals</a>
             <a class="nav-link" href="{% url 'challenge:challenge_list' %}">Challenges</a>
             <a class="nav-link" href="{% url 'groups:workout_groups_list' %}">Workout Groups</a>
+            <a class="nav-link" href="{% url 'workout_stats:statistics' %}">Stats</a>
 
             {% if user.is_authenticated %}
               <div class="nav-item dropdown">
@@ -75,7 +76,8 @@
           <div class="col-12 col-md-4 mb-4 text-center">
             <h5 class="text-uppercase">Links</h5>
             <hr class="bg-light mx-auto mb-3 mt-0" style="width: 60px;" />
-            <a class="text-white text-decoration-none footer-link" href="{% url 'home:about' %}">About</a>
+            <a class="text-white text-decoration-none footer-link" href="{% url 'home:about' %}">About</a><br>
+            <a class="text-white text-decoration-none footer-link" href="{% url 'workout_stats:statistics' %}">Stats</a>
           </div>
           <div class="col-12 col-md-4 mb-4 text-center">
             <h5 class="text-uppercase">Contact</h5>
