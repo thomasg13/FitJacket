@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Weekly Statistics</h2>
+
+    <!-- Weekly Workout Days Chart -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Workout Days per Week</h5>
+            <canvas id="workoutDaysChart" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Weekly Distance Chart -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Miles per Week</h5>
+            <canvas id="distanceChart" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Workout Days Chart
+    const workoutDaysCtx = document.getElementById('workoutDaysChart').getContext('2d');
+    new Chart(workoutDaysCtx, {
+        type: 'line',
+        data: {
+            labels: {{ dates|safe }},
+            datasets: [{
+                label: 'Days Worked Out',
+                data: {{ workout_days|safe }},
+                borderColor: '#007bff',
+                tension: 0.1,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 7,
+                    ticks: {
+                        stepSize: 1
+                    }
+                },
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
+        }
+    });
+
+    // Distance Chart
+    const distanceCtx = document.getElementById('distanceChart').getContext('2d');
+    new Chart(distanceCtx, {
+        type: 'line',
+        data: {
+            labels: {{ dates|safe }},
+            datasets: [{
+                label: 'Miles',
+                data: {{ total_miles|safe }},
+                borderColor: '#28a745',
+                tension: 0.1,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                },
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %} 
