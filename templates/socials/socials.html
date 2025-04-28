@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <h1>Socials</h1>
+
+    <form method="GET" action="{% url 'socials:search_users' %}" class="d-flex mb-4">
+      <input class="form-control me-2" type="search" name="q" placeholder="Search users..." aria-label="Search">
+      <button class="btn btn-outline-primary" type="submit">Search</button>
+    </form>
+    <h3>Friend Requests</h3>
+    <ul class="list-group">
+      {% for fr in request.user.received_requests.all %}
+        {% if not fr.is_accepted %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ fr.from_user.username }}
+            <a href="{% url 'socials:accept_friend_request' fr.id %}" class="btn btn-sm btn-primary">Accept</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+
+    <h3 class="mb-3">My Friends</h3>
+    <ul class="list-group">
+      {% for friend in friends %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ friend.username }}
+          <a href="#" class="btn btn-sm btn-outline-secondary disabled">Friends</a>
+        </li>
+      {% empty %}
+        <li class="list-group-item">You have no friends yet.</li>
+      {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <h2 class="mb-4">Search Results for "{{ query }}"</h2>
+
+  {% if users %}
+    <ul class="list-group mb-4">
+      {% for user in users %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ user.username }}
+          <a href="{% url 'socials:send_friend_request' user.id %}" class="btn btn-sm btn-outline-success">Add Friend</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No users found.</p>
+  {% endif %}
+
+  <div class="d-grid">
+    <a href="{% url 'socials:home' %}" class="btn btn-outline-primary">Search Again</a>
+  </div>
+
+</div>
+{% endblock %}

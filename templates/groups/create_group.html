@@ -1,13 +1,31 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
-  <div class="container">
-    <h2>Create New Workout Group</h2>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
 
-    <form method="POST" action="{% url 'groups:create_group' %}">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit" class="btn btn-primary">Create Group</button>
-    </form>
+      <h2 class="mb-4 text-center">Create New Workout Group</h2>
+
+      <form method="POST" class="mb-4" action="{% url 'groups:create_group' %}">
+        {% csrf_token %}
+
+        <div class="mb-3">
+          <label for="id_name" class="form-label">Group Name</label>
+          <input type="text" name="name" id="id_name" class="form-control" value="{{ form.name.value|default:'' }}">
+        </div>
+
+        <div class="mb-3">
+          <label for="id_description" class="form-label">Group Description</label>
+          <textarea name="description" id="id_description" class="form-control" rows="5">{{ form.description.value|default:'' }}</textarea>
+        </div>
+
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary">Create Group</button>
+        </div>
+      </form>
+
+    </div>
   </div>
+</div>
 {% endblock %}
