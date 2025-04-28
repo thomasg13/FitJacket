@@ -4,6 +4,11 @@
   <div class="container">
     <h2 class="mb-4">Workout Groups</h2>
 
+        <!-- Button to create a new group -->
+    <div class="mb-4">
+      <a href="{% url 'groups:create_group' %}" class="btn btn-primary">Create New Group</a>
+    </div>
+
     <div class="row">
       <!-- Groups the user is in -->
       <div class="col-md-6">
