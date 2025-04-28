@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 
 from socials.models import FriendRequest
@@ -33,6 +34,9 @@ def search_users(request):
 @login_required
 def send_friend_request(request, user_id):
     user = get_object_or_404(User, id=user_id)
+    if user == request.user: # can't friend yourself
+        messages.error(request, "You can't send a friend request to yourself!")
+        return redirect('socials:home')
     FriendRequest.objects.get_or_create(from_user=request.user, to_user=user)
     return redirect('socials:home')
 
