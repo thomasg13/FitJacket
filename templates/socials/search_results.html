@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <h2 class="mb-4">Search Results for "{{ query }}"</h2>
+
+  {% if users %}
+    <ul class="list-group mb-4">
+      {% for user in users %}
+        <li class="list-group-item">{{ user.username }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No users found.</p>
+  {% endif %}
+
+  <div class="d-grid">
+    <a href="{% url 'socials:home' %}" class="btn btn-outline-primary">Search Again</a>
+  </div>
+
+</div>
+{% endblock %}

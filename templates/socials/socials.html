@@ -4,4 +4,8 @@
 {% block content %}
     <h1>Socials</h1>
 
+    <form method="GET" action="{% url 'socials:search_users' %}" class="d-flex mb-4">
+      <input class="form-control me-2" type="search" name="q" placeholder="Search users..." aria-label="Search">
+      <button class="btn btn-outline-primary" type="submit">Search</button>
+    </form>
 {% endblock %}
