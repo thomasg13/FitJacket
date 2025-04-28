@@ -1,29 +1,54 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Workout Challenges</h2>
+  <!-- Leaderboard -->
+  <h2>🏆 Leaderboard</h2>
+  <ol class="list-group mb-5">
+    {% for user in leaderboard %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ user.username }}
+        <span class="badge bg-primary rounded-pill">{{ user.completed_count }}</span>
+      </li>
+    {% empty %}
+      <li class="list-group-item">No completions yet.</li>
+    {% endfor %}
+  </ol>
 
+  <!-- All Challenges -->
+  <h2>Workout Challenges</h2>
   <ul class="list-group mt-4">
     {% for challenge in challenges %}
       <li class="list-group-item mb-4 p-4 shadow-sm rounded">
         <h4>{{ challenge.title }}</h4>
         <p>{{ challenge.description }}</p>
         <p><strong>Created by:</strong> {{ challenge.creator.username }}</p>
-        <p><strong>Dates:</strong> {{ challenge.start_date|date:"M. j, Y" }} to {{ challenge.end_date|date:"M. j, Y" }}</p>
+        <p>
+          <strong>Dates:</strong>
+          {{ challenge.start_date|date:"M. j, Y" }}
+          to
+          {{ challenge.end_date|date:"M. j, Y" }}
+        </p>
 
-        <!-- Badge showing if user is creator or joined -->
+        <!-- Badge showing if user is creator or completed -->
         {% if user == challenge.creator %}
           <span class="badge bg-info text-dark">You created this</span>
         {% elif user in challenge.participants.all %}
-          <span class="badge bg-success">You joined</span>
+          <span class="badge bg-success">You completed this</span>
         {% endif %}
 
-        <!-- Always show the Join button for the creator and other users -->
-        <form action="{% url 'challenge:join_challenge' challenge.id %}" method="post" style="display: inline;">
+        <!-- Complete button -->
+        <form
+          action="{% url 'challenge:join_challenge' challenge.id %}"
+          method="post"
+          style="display: inline;"
+        >
           {% csrf_token %}
-          <button type="submit" class="btn btn-outline-primary btn-sm"
-            {% if user in challenge.participants.all %} disabled {% endif %}>
-            {% if user in challenge.participants.all %}Joined{% else %}Join{% endif %}
+          <button
+            type="submit"
+            class="btn btn-outline-primary btn-sm"
+            {% if user in challenge.participants.all %} disabled {% endif %}
+          >
+            {% if user in challenge.participants.all %}Completed{% else %}Complete{% endif %}
           </button>
         </form>
       </li>
@@ -33,6 +58,8 @@
   </ul>
 
   <div class="text-center mt-5">
-    <a href="{% url 'challenge:create_challenge' %}" class="btn btn-primary">+ Create New Challenge</a>
+    <a href="{% url 'challenge:create_challenge' %}" class="btn btn-primary">
+      + Create New Challenge
+    </a>
   </div>
 {% endblock %}

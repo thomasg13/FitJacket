@@ -8,7 +8,8 @@ class Challenge(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_challenges')
-    participants = models.ManyToManyField(User, related_name='joined_challenges', blank=True)
+    participants = models.ManyToManyField(User, related_name='completed_challenges', blank=True)
+
 
     def __str__(self):
         return self.title

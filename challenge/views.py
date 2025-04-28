@@ -1,3 +1,5 @@
+from django.contrib.auth.models import User
+from django.db.models import Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Challenge
@@ -6,7 +8,17 @@ from .forms import ChallengeForm
 @login_required
 def challenge_list(request):
     challenges = Challenge.objects.all()
-    return render(request, 'challenge/challenge_list.html', {'challenges': challenges})
+    leaderboard = (
+        User.objects
+            .annotate(completed_count=Count('completed_challenges'))
+            .filter(completed_count__gt=0)
+            .order_by('-completed_count')[:10]
+    )
+    return render(request, 'challenge/challenge_list.html', {
+        'challenges': challenges,
+        'leaderboard': leaderboard,
+    })
+
 
 @login_required
 def create_challenge(request):
