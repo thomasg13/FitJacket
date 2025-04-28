@@ -13,6 +13,8 @@ import requests
 from datetime import datetime, timedelta
 import pytz
 from config.config_manager import ConfigurationManager
+from django.http import JsonResponse
+from .models import Workout
 
 logger = logging.getLogger(__name__)
 config = ConfigurationManager()
@@ -231,3 +233,36 @@ def chatbot_view(request):
             return JsonResponse({"reply": f"Error: {str(e)}"})
 
     return JsonResponse({"reply": "Invalid request method."})
+
+from django.http import JsonResponse
+from .models import Workout
+
+def get_recent_workouts(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Not authenticated'}, status=403)
+
+    workouts = (
+        Workout.objects.filter(user=request.user)
+        .order_by('-date')[:7]  # get latest 7 workouts
+    )
+
+    workout_list = []
+    for workout in workouts:
+        exercises = []
+        for ex in workout.repbasedexercise_set.all():
+            exercises.append({
+                'name': ex.name,
+                'details': f"{ex.sets}x{ex.reps} reps, {ex.weight or 0} lbs"
+            })
+        for ex in workout.timedexercise_set.all():
+            exercises.append({
+                'name': ex.name,
+                'details': f"{ex.duration_minutes}m {ex.duration_seconds}s"
+            })
+
+        workout_list.append({
+            'date': workout.date.strftime("%B %d, %Y"),
+            'exercises': exercises
+        })
+
+    return JsonResponse({'success': True, 'workouts': workout_list})

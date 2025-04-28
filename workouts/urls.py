@@ -14,4 +14,6 @@ urlpatterns = [
     path('strava/connect/', views.strava_auth, name='strava_connect'),  # Initiates Strava OAuth
     path('strava/callback/', views.strava_callback, name='strava_callback'),  # Where Strava redirects back to
     path('strava/import/', views.import_strava_workout, name='strava_import'),  # Endpoint for importing Strava workouts
+
+    path('get_recent_workouts/', views.get_recent_workouts, name='get_recent_workouts'),
 ]

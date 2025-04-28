@@ -20,7 +20,10 @@
     <span id="send-btn" class="material-symbols-rounded" onclick="sendChat()">send</span>
   </div>
 </div>
-<button id="new-chat-btn" class="new-chat-btn" onclick="startNewChat()">Start New Chat</button>
+<div class="chat-actions">
+  <button id="new-chat-btn" class="new-chat-btn" onclick="startNewChat()">Start New Chat</button>
+  <button id="generate-plan-btn" class="generate-plan-btn" onclick="generatePersonalizedPlan()">Generate Plan</button>
+</div>
 
 <!-- Chatbot Window -->
 <button class="chatbot-toggler" onclick="toggleChat()">
@@ -92,6 +95,24 @@ body.show-chatbot .chatbot-toggler span:last-child {
   z-index: 9999;
 }
 body.show-chatbot #new-chat-btn{
+    display:block;
+}
+.generate-plan-btn{
+    position: fixed;
+  bottom: 105px; /* Same as new-chat-btn */
+  right: 250px; /* push it left of new-chat-btn */
+  background: #ffffff;
+  color: #724ae8;
+  border: 2px solid #724ae8;
+  border-radius: 25px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: none;
+  z-index: 9999;
+}
+body.show-chatbot #generate-plan-btn{
     display:block;
 }
 .chatbot {
@@ -250,6 +271,48 @@ header h2 {
 
 <!-- Embedded JavaScript -->
 <script>
+    async function generatePersonalizedPlan() {
+  try {
+    // Call a backend endpoint to get recent workouts
+    const response = await fetch("/workouts/get_recent_workouts/");
+    const data = await response.json();
+
+    if (!data.success) {
+      appendChat("Error", "Could not fetch workout data.", "incoming");
+      return;
+    }
+
+    // Assemble message
+    let message = "Based on my recent workouts, please generate a personalized plan:\n\n";
+
+    data.workouts.forEach((workout, index) => {
+      message += `Workout ${index + 1} (${workout.date}):\n`;
+      workout.exercises.forEach(ex => {
+        message += `- ${ex.name}: ${ex.details}\n`;
+      });
+      message += "\n";
+    });
+
+    console.log("[Generated Message for Chatbot]:\n", message);
+
+
+    appendChat("You", "Generate a personalized workout plan based on my latest progress!", "outgoing");
+
+    // Now send this assembled message to the chatbot backend
+    const chatResponse = await fetch("/workouts/chatbot/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message })
+    });
+
+    const chatData = await chatResponse.json();
+    appendChat("FitBot", chatData.reply, "incoming");
+
+  } catch (error) {
+    console.error(error);
+    appendChat("Error", "Failed to generate workout plan.", "incoming");
+  }
+}
 function toggleChat() {
   const chat = document.querySelector(".chatbot");
   const body = document.body;
