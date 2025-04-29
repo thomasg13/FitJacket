@@ -66,3 +66,21 @@ def unfriend(request, user_id):
         messages.success(request, f"You have unfriended {other_user.username}.")
 
     return redirect('socials:home')
+
+@login_required
+def cancel_friend_request(request, request_id):
+    if request.method == "POST":
+        friend_request = get_object_or_404(FriendRequest, id=request_id, from_user=request.user, is_accepted=False)
+        friend_request.delete()
+        messages.success(request, "Friend request canceled.")
+
+    return redirect('socials:home')
+
+@login_required
+def reject_friend_request(request, request_id):
+    if request.method == "POST":
+        friend_request = get_object_or_404(FriendRequest, id=request_id, to_user=request.user, is_accepted=False)
+        friend_request.delete()
+        messages.success(request, "Friend request rejected.")
+
+    return redirect('socials:home')

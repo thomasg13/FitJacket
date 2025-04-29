@@ -25,7 +25,10 @@
       {% for request in outgoing_requests %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
           {{ request.to_user.username }}
-          <span class="badge bg-secondary">Pending</span>
+          <form method="POST" action="{% url 'socials:cancel_friend_request' request.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+          </form>
         </li>
       {% empty %}
         <li class="list-group-item">No outgoing requests.</li>
@@ -37,7 +40,16 @@
       {% for fr in pending_requests %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
           {{ fr.from_user.username }}
-          <a href="{% url 'socials:accept_friend_request' fr.id %}" class="btn btn-sm btn-primary">Accept</a>
+          <div class="d-flex gap-2">
+            <form method="POST" action="{% url 'socials:accept_friend_request' fr.id %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-primary">Accept</button>
+            </form>
+            <form method="POST" action="{% url 'socials:reject_friend_request' fr.id %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-danger">Reject</button>
+            </form>
+          </div>
         </li>
       {% empty %}
         <li class="list-group-item">No incoming requests.</li>
