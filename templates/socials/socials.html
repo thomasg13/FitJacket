@@ -60,7 +60,7 @@
     <ul class="list-group">
       {% for friend in friends %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
-          {{ friend.username }}
+          <a href="{% url 'socials:friend_profile' friend.id %}">{{ friend.username }}</a>
           <form method="POST" action="{% url 'socials:unfriend' friend.id %}">
             {% csrf_token %}
             <button type="submit" class="btn btn-sm btn-outline-danger">Unfriend</button>

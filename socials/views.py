@@ -84,3 +84,18 @@ def reject_friend_request(request, request_id):
         messages.success(request, "Friend request rejected.")
 
     return redirect('socials:home')
+
+@login_required
+def friend_profile(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+
+    # Can only view if friend with the requested user, can't just change url to view users
+    sent = FriendRequest.objects.filter(from_user=request.user, to_user=user, is_accepted=True)
+    received = FriendRequest.objects.filter(from_user=user, to_user=request.user, is_accepted=True)
+    if not sent.exists() and not received.exists():
+        messages.error(request, "You are not friends with this user.")
+        return redirect('socials:home')
+
+    return render(request, 'socials/friend_profile.html', {
+        'friend': user,
+    })

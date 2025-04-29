@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-body">
+      <h2 class="card-title text-center">{{ friend.username }}</h2>
+
+      <div class="d-flex justify-content-center mt-4">
+        <a href="{% url 'socials:home' %}" class="btn btn-secondary">Back to Home</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
