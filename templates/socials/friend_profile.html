@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <div class="container mt-5">
@@ -18,7 +19,7 @@
     {% if fitness_goal %}
       <div class="card shadow-sm">
         <div class="card-body">
-          <h5 class="card-title mb-4 text-center">Fitness Goals</h5>
+          <h5 class="card-title mb-4 text-center">Current Goals</h5>
 
           <ul class="list-group list-group-flush">
             <li class="list-group-item">
@@ -34,7 +35,6 @@
               <strong>Daily Calories Goal:</strong> {{ fitness_goal.daily_calories }} kcal
             </li>
           </ul>
-
         </div>
       </div>
     {% else %}
@@ -42,58 +42,6 @@
         No fitness goals set.
       </div>
     {% endif %}
-  </div>
-
-  <div class="mb-5">
-    <h3 class="mt-5 mb-3">Created Challenges</h3>
-    <div class="row">
-      {% for challenge in created_challenges %}
-        <div class="col-md-6">
-          <div class="card mb-4 shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">{{ challenge.title }}</h5>
-              <p class="card-text">{{ challenge.description }}</p>
-              <p class="card-text">
-                <small class="text-muted">
-                  {{ challenge.start_date|date:"M. j, Y" }} – {{ challenge.end_date|date:"M. j, Y" }}
-                </small>
-              </p>
-              <span class="badge bg-info text-dark">Created by {{ challenge.creator.username }}</span>
-            </div>
-          </div>
-        </div>
-      {% empty %}
-        <div class="col">
-          <div class="alert alert-info">No created challenges.</div>
-        </div>
-      {% endfor %}
-    </div>
-  </div>
-
-  <div class="mb-5">
-    <h3 class="mt-5 mb-3">Joined Challenges</h3>
-    <div class="row">
-      {% for challenge in participated_challenges %}
-        <div class="col-md-6">
-          <div class="card mb-4 shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">{{ challenge.title }}</h5>
-              <p class="card-text">{{ challenge.description }}</p>
-              <p class="card-text">
-                <small class="text-muted">
-                  {{ challenge.start_date|date:"M. j, Y" }} – {{ challenge.end_date|date:"M. j, Y" }}
-                </small>
-              </p>
-              <span class="badge bg-success">Completed</span>
-            </div>
-          </div>
-        </div>
-      {% empty %}
-        <div class="col">
-          <div class="alert alert-info">No joined challenges.</div>
-        </div>
-      {% endfor %}
-    </div>
   </div>
 
   <div class="mb-5">
@@ -207,5 +155,131 @@
     {% endif %}
   </div>
 
+  <!-- Workout Statistics Section -->
+  <div class="mb-5">
+    <h3 class="mt-5 mb-3">Workout Statistics</h3>
+
+    <!-- This Week's Progress -->
+    <div class="row mb-5">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">This Week's Workout Days</h5>
+            <h3>{{ this_week_days }} / {{ goal.weekly_workout_days_goal }} days</h3>
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" 
+                   style="width: {{ days_progress }}%" 
+                   aria-valuenow="{{ days_progress }}" 
+                   aria-valuemin="0" 
+                   aria-valuemax="100">
+                {{ days_progress }}%
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">This Week's Miles</h5>
+            <h3>{{ this_week_miles }} / {{ goal.weekly_miles_goal }} miles</h3>
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" 
+                   style="width: {{ miles_progress }}%" 
+                   aria-valuenow="{{ miles_progress }}" 
+                   aria-valuemin="0" 
+                   aria-valuemax="100">
+                {{ miles_progress }}%
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historical Statistics -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Workout Days per Week</h5>
+        <canvas id="workoutDaysChart" height="200"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Miles per Week</h5>
+        <canvas id="distanceChart" height="200"></canvas>
+      </div>
+    </div>
+  </div>
 </div>
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Workout Days Chart
+    const workoutDaysCtx = document.getElementById('workoutDaysChart').getContext('2d');
+    new Chart(workoutDaysCtx, {
+        type: 'line',
+        data: {
+            labels: {{ dates|safe }},
+            datasets: [{
+                label: 'Days Worked Out',
+                data: {{ workout_days|safe }},
+                borderColor: '#007bff',
+                tension: 0.1,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 7,
+                    ticks: {
+                        stepSize: 1
+                    }
+                },
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
+        }
+    });
+
+    // Distance Chart
+    const distanceCtx = document.getElementById('distanceChart').getContext('2d');
+    new Chart(distanceCtx, {
+        type: 'line',
+        data: {
+            labels: {{ dates|safe }},
+            datasets: [{
+                label: 'Miles',
+                data: {{ total_miles|safe }},
+                borderColor: '#28a745',
+                tension: 0.1,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                },
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
 {% endblock %}
