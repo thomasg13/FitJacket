@@ -94,11 +94,12 @@ def friend_profile(request, user_id):
     user = get_object_or_404(User, id=user_id)
 
     # Can only view if friend with the requested user, can't just change url to view users
-    sent = FriendRequest.objects.filter(from_user=request.user, to_user=user, is_accepted=True)
-    received = FriendRequest.objects.filter(from_user=user, to_user=request.user, is_accepted=True)
-    if not sent.exists() and not received.exists():
-        messages.error(request, "You are not friends with this user.")
-        return redirect('socials:home')
+    if user != request.user: # Allows user to view their own profile
+        sent = FriendRequest.objects.filter(from_user=request.user, to_user=user, is_accepted=True)
+        received = FriendRequest.objects.filter(from_user=user, to_user=request.user, is_accepted=True)
+        if not sent.exists() and not received.exists():
+            messages.error(request, "You are not friends with this user.")
+            return redirect('socials:home')
 
     created_challenges = Challenge.objects.filter(creator=user)
     participated_challenges = Challenge.objects.filter(participants=user)
@@ -114,3 +115,7 @@ def friend_profile(request, user_id):
         'groups': groups,
         'workouts': workouts,
     })
+
+@login_required
+def my_profile(request):
+  return redirect('socials:friend_profile', user_id=request.user.id)
