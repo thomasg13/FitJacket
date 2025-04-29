@@ -2,16 +2,16 @@
 {% load static %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-4 px-2">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-12">
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-primary text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h2 class="mb-0">{{ group.name }}</h2>
-                        <div>
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center w-100">
+                        <h2 class="mb-2 mb-md-0">{{ group.name }}</h2>
+                        <div class="d-flex flex-column flex-md-row gap-2 w-100 justify-content-md-end align-items-end align-items-md-center">
                             <a href="{% url 'groups:create_challenge' group.id %}" class="btn btn-light">Create Challenge</a>
-                            <a href="{% url 'groups:workout_groups' %}" class="btn btn-light ms-2">Back to Groups</a>
+                            <a href="{% url 'groups:workout_groups' %}" class="btn btn-light">Back to Groups</a>
                         </div>
                     </div>
                 </div>
@@ -20,32 +20,29 @@
                 </div>
             </div>
 
-            <h3 class="mb-4">Active Challenges</h3>
-            
+            <h3 class="mb-3">Active Challenges</h3>
+
             {% if challenges %}
             <div class="row">
                 {% for challenge in challenges %}
-                <div class="col-md-6 mb-4">
+                <div class="col-12 col-md-6 mb-3">
                     <div class="card h-100 shadow-sm">
                         <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
                                 <h4 class="card-title mb-0">{{ challenge.title }}</h4>
                                 {% if challenge.completed %}
                                     <span class="badge bg-success">Completed</span>
                                 {% endif %}
                             </div>
                             <p class="card-text">{{ challenge.description }}</p>
-                            
-                            <div class="d-grid gap-2">
+
+                            <div class="d-grid gap-2 mt-2">
                                 {% if not challenge.completed %}
                                     {% if request.user in challenge.participants.all %}
-                                        <a href="{% url 'groups:complete_challenge' group.id challenge.id %}" 
-                                           class="btn btn-success">Mark as Complete</a>
-                                        <a href="{% url 'groups:leave_challenge' group.id challenge.id %}" 
-                                           class="btn btn-outline-danger">Leave Challenge</a>
+                                        <a href="{% url 'groups:complete_challenge' group.id challenge.id %}" class="btn btn-success">Mark as Complete</a>
+                                        <a href="{% url 'groups:leave_challenge' group.id challenge.id %}" class="btn btn-outline-danger">Leave Challenge</a>
                                     {% else %}
-                                        <a href="{% url 'groups:join_challenge' group.id challenge.id %}" 
-                                           class="btn btn-primary">Join Challenge</a>
+                                        <a href="{% url 'groups:join_challenge' group.id challenge.id %}" class="btn btn-primary">Join Challenge</a>
                                     {% endif %}
                                 {% endif %}
                             </div>
@@ -62,4 +59,4 @@
         </div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}
