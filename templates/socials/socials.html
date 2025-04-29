@@ -20,6 +20,17 @@
       <button class="btn btn-outline-primary" type="submit">Search</button>
     </form>
     <h3>Friend Requests</h3>
+    <ul class="list-group mb-4">
+      {% for request in outgoing_requests %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ request.to_user.username }}
+          <span class="badge bg-secondary">Pending</span>
+        </li>
+      {% empty %}
+        <li class="list-group-item">No outgoing requests.</li>
+      {% endfor %}
+    </ul>
+
     <ul class="list-group">
       {% for fr in request.user.received_requests.all %}
         {% if not fr.is_accepted %}

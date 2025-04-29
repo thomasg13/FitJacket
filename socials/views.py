@@ -12,12 +12,15 @@ from socials.models import FriendRequest
 def home(request):
     pending_requests = FriendRequest.objects.filter(to_user=request.user, is_accepted=False)
 
+    outgoing_requests = FriendRequest.objects.filter(from_user=request.user, is_accepted=False)
+
     sent = FriendRequest.objects.filter(from_user=request.user, is_accepted=True)
     received = FriendRequest.objects.filter(to_user=request.user, is_accepted=True)
     friends = [fr.to_user for fr in sent] + [fr.from_user for fr in received]
 
     return render(request, 'socials/socials.html', {
         'pending_requests': pending_requests,
+        'outgoing_requests': outgoing_requests,
         'friends': friends,
     })
 
