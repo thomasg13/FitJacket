@@ -14,6 +14,27 @@
   </div>
 
   <div class="mb-5">
+    <h3 class="mt-4">🏅 Achievements</h3>
+    <div class="row">
+      {% for ua in user_achievements %}
+        <div class="col-sm-6 col-md-4 col-lg-3 text-center mb-4">
+          <div class="d-flex justify-content-center">
+            {% if ua.achievement.icon %}
+              <img src="{{ ua.achievement.icon.url }}" class="img-fluid rounded-circle mb-2" alt="{{ ua.achievement.name }}" style="width: 80px; height: 80px;">
+            {% else %}
+              <img src="{% static 'images/test.jpeg' %}" alt="Default Badge" width="80" height="80" class="rounded-circle mb-2">
+            {% endif %}
+          </div>
+          <h6 class="mt-2">{{ ua.achievement.name }}</h6>
+          <small class="text-muted">{{ ua.earned_at|date:"F j, Y" }}</small>
+        </div>
+      {% empty %}
+        <p class="text-muted">No achievements yet. Keep going!</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="mb-5">
     <h3 class="mt-5 mb-3">Fitness Goals</h3>
 
     {% if fitness_goal %}

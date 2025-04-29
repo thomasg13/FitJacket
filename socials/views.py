@@ -8,7 +8,7 @@ from django.db.models import Sum, Count, Q
 from groups.models import Challenge
 from goals.models import FitnessGoal
 from groups.models import WorkoutGroup
-from socials.models import FriendRequest
+from socials.models import FriendRequest, UserAchievement
 from workouts.models import Workout, TimedExercise
 from users.models import UserProfile
 
@@ -108,6 +108,7 @@ def reject_friend_request(request, request_id):
 
 @login_required
 def friend_profile(request, user_id):
+    check_achievements(request.user)
     user = get_object_or_404(User, id=user_id)
 
     # Can only view if friend with the requested user, can't just change url to view users
@@ -185,6 +186,7 @@ def friend_profile(request, user_id):
     fitness_goal = FitnessGoal.objects.filter(user=user).first()
     groups = WorkoutGroup.objects.filter(members=user)
     workouts = Workout.objects.filter(user=user).order_by('-date')[:5]  # Show last 5 workouts
+    user_achievements = UserAchievement.objects.filter(user=request.user).select_related('achievement')
 
     return render(request, 'socials/friend_profile.html', {
         'friend': user,
@@ -199,6 +201,7 @@ def friend_profile(request, user_id):
         'dates': dates,
         'workout_days': workout_days,
         'total_miles': total_miles,
+        'user_achievements': user_achievements
     })
 
 @login_required
@@ -302,3 +305,54 @@ def leaderboard(request):
     return render(request, 'socials/leaderboard.html', {
         'challenge_leaders': challenge_leaders,
     })
+
+
+def check_achievements(user):
+    from socials.models import Achievement, UserAchievement, FriendRequest
+    from workouts.models import Workout, TimedExercise
+    from users.models import UserProfile
+    from groups.models import WorkoutGroup
+
+    workout_count = Workout.objects.filter(user=user).count()
+
+    total_miles = TimedExercise.objects.filter(
+        workout__user=user,
+        distance__isnull=False
+    ).aggregate(total=Sum('distance'))['total'] or 0
+    total_miles = float(total_miles)
+
+    user_profile = UserProfile.objects.get(user=user)
+    completed_challenges = user_profile.completed_challenges
+
+    friends_made = FriendRequest.objects.filter(
+        (Q(from_user=user) | Q(to_user=user)),
+        is_accepted=True
+    ).count()
+
+    groups_joined = WorkoutGroup.objects.filter(members=user).count()
+
+    achievements_to_check = [
+        #(criteria_code, name, description, condition)
+        ('first_workout', 'First Workout', 'Completed your first workout!', workout_count >= 1),
+        ('5_workouts', '5 Workouts', 'Completed 5 workouts!', workout_count >= 5),
+        ('10_workouts', '10 Workouts', 'Completed 10 workouts!', workout_count >= 10),
+        ('50_workouts', '50 Workouts', 'Completed 50 workouts!', workout_count >= 50),
+        ('first_challenge', 'First Challenge', 'Completed your first challenge!', completed_challenges >= 1),
+        ('5_challenges', '5 Challenges', 'Completed 5 challenges!', completed_challenges >= 5),
+        ('first_mile', 'First Mile', 'Completed your first mile!', total_miles >= 1),
+        ('10_miles', '10 Miles', 'Completed 10 miles!', total_miles >= 10),
+        ('50_miles', '50 Miles', 'Completed 50 miles!', total_miles >= 50),
+        ('100_miles', '100 Miles', 'Completed 100 miles!', total_miles >= 100),
+        ('first_friend', 'First Friend', 'Made your first friend!', friends_made >= 1),
+        ('5_friends', '5 Friends', 'Made 5 friends!', friends_made >= 5),
+        ('first_group', 'First Group', 'Joined your first group!', groups_joined >= 1),
+        ('5_groups', '5 Groups', 'Joined 5 workout groups!', groups_joined >= 5),
+    ]
+
+    for code, name, description, condition in achievements_to_check:
+        if condition:
+            achievement, _ = Achievement.objects.get_or_create(criteria_code=code, defaults={
+                'name': name,
+                'description': description,
+            })
+            UserAchievement.objects.get_or_create(user=user, achievement=achievement)
