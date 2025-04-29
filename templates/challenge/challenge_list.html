@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <!-- Leaderboard -->
+
   <h2>Leaderboard</h2>
   <ol class="list-group mb-5">
     {% for user in leaderboard %}
@@ -14,7 +14,7 @@
     {% endfor %}
   </ol>
 
-  <!-- All Challenges -->
+
   <h2>Workout Challenges</h2>
   <ul class="list-group mt-4">
     {% for challenge in challenges %}
@@ -29,14 +29,14 @@
           {{ challenge.end_date|date:"M. j, Y" }}
         </p>
 
-        <!-- Badge showing if user is creator or completed -->
+
         {% if user == challenge.creator %}
           <span class="badge bg-info text-dark">You created this</span>
         {% elif user in challenge.participants.all %}
           <span class="badge bg-success">You completed this</span>
         {% endif %}
 
-        <!-- Complete button -->
+
         <form
           action="{% url 'challenge:join_challenge' challenge.id %}"
           method="post"

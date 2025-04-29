@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 
-app_name = 'challenge'  # This registers the 'challenge' namespace
+app_name = 'challenge'
 
 urlpatterns = [
     path('', views.challenge_list, name='challenge_list'),
