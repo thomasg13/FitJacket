@@ -50,3 +50,19 @@ def accept_friend_request(request, request_id):
         friend_request.is_accepted = True
         friend_request.save()
     return redirect('socials:home')
+
+@login_required
+def unfriend(request, user_id):
+    if request.method == "POST":
+        other_user = get_object_or_404(User, id=user_id)
+
+        FriendRequest.objects.filter(
+            from_user=request.user, to_user=other_user, is_accepted=True
+        ).delete()
+        FriendRequest.objects.filter(
+            from_user=other_user, to_user=request.user, is_accepted=True
+        ).delete()
+
+        messages.success(request, f"You have unfriended {other_user.username}.")
+
+    return redirect('socials:home')

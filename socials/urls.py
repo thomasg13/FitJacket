@@ -8,4 +8,5 @@ urlpatterns = [
     path("search/", views.search_users, name="search_users"),
     path("friend-request/send/<int:user_id>/", views.send_friend_request, name="send_friend_request"),
     path("friend-request/accept/<int:request_id>/", views.accept_friend_request, name="accept_friend_request"),
+    path('unfriend/<int:user_id>/', views.unfriend, name='unfriend'),
 ]
