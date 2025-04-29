@@ -44,6 +44,20 @@ def send_friend_request(request, user_id):
     if user == request.user: # can't friend yourself
         messages.error(request, "You can't send a friend request to yourself!")
         return redirect('socials:home')
+
+    # Check if already friends
+    sent = FriendRequest.objects.filter(from_user=request.user, to_user=user, is_accepted=True)
+    received = FriendRequest.objects.filter(from_user=user, to_user=request.user, is_accepted=True)
+    if sent.exists() or received.exists():
+        messages.error(request, "You are already friends with this user.")
+        return redirect('socials:home')
+
+    # Check if a request already sent
+    pending = FriendRequest.objects.filter(from_user=request.user, to_user=user, is_accepted=False)
+    if pending.exists():
+        messages.info(request, "Friend request already sent and pending.")
+        return redirect('socials:home')
+
     FriendRequest.objects.get_or_create(from_user=request.user, to_user=user)
     return redirect('socials:home')
 
