@@ -3,13 +3,14 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from datetime import datetime, timedelta
-from django.db.models import Sum
+from django.db.models import Sum, Count, Q
 
-from challenge.models import Challenge
+from groups.models import Challenge
 from goals.models import FitnessGoal
 from groups.models import WorkoutGroup
 from socials.models import FriendRequest
 from workouts.models import Workout, TimedExercise
+from users.models import UserProfile
 
 
 # Create your views here.
@@ -294,4 +295,14 @@ def friend_progress(request, user_id):
         'dates': dates,
         'workout_days': workout_days,
         'total_miles': total_miles,
+    })
+
+@login_required
+def leaderboard(request):
+    # Get top 10 users by completed challenges
+    challenge_leaders = UserProfile.objects.order_by('-completed_challenges')[:10].values_list('user', 'completed_challenges')
+    challenge_leaders = [(User.objects.get(id=user_id), count) for user_id, count in challenge_leaders]
+
+    return render(request, 'socials/leaderboard.html', {
+        'challenge_leaders': challenge_leaders,
     })

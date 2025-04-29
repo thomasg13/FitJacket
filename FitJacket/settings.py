@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     'users',
     'workouts',
     'goals',
-    'challenge',
     'groups',
     'socials'
 ]

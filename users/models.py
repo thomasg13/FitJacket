@@ -9,6 +9,7 @@ class UserProfile(models.Model):
         ("q3", "What is your mother's maiden name?"),
     ])
     security_answer = models.CharField(max_length=150)  # Store answers case-insensitively
+    completed_challenges = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):
         # lowercase the answer to make check easier
