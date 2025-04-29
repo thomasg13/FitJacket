@@ -134,3 +134,20 @@ html, body {
   z-index: 1;
   padding: 4rem 1rem;
 }
+
+@media (max-width: 991.98px) {
+  .mobile-nav-bg {
+    background-color: rgba(30, 30, 47, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 1.5rem;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    margin-top: 1rem;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 0.5rem 0;
+    font-size: 1.1rem;
+  }
+}
