@@ -3,7 +3,11 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 
+from challenge.models import Challenge
+from goals.models import FitnessGoal
+from groups.models import WorkoutGroup
 from socials.models import FriendRequest
+from workouts.models import Workout
 
 
 # Create your views here.
@@ -96,6 +100,17 @@ def friend_profile(request, user_id):
         messages.error(request, "You are not friends with this user.")
         return redirect('socials:home')
 
+    created_challenges = Challenge.objects.filter(creator=user)
+    participated_challenges = Challenge.objects.filter(participants=user)
+    fitness_goal = FitnessGoal.objects.filter(user=user).first()
+    groups = WorkoutGroup.objects.filter(members=user)
+    workouts = Workout.objects.filter(user=user).order_by('-date')[:5]  # Show last 5 workouts
+
     return render(request, 'socials/friend_profile.html', {
         'friend': user,
+        'created_challenges': created_challenges,
+        'participated_challenges': participated_challenges,
+        'fitness_goal': fitness_goal,
+        'groups': groups,
+        'workouts': workouts,
     })
