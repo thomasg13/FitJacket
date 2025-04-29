@@ -21,8 +21,8 @@
   </div>
 </div>
 <div class="chat-actions">
-  <button id="new-chat-btn" class="new-chat-btn" onclick="startNewChat()">Start New Chat</button>
-  <button id="generate-plan-btn" class="generate-plan-btn" onclick="generatePersonalizedPlan()">Generate Plan</button>
+  <button class="chat-btn" id="generate-plan-btn" onclick="generatePersonalizedPlan()">Generate Plan</button>
+  <button class="chat-btn" id="new-chat-btn" onclick="startNewChat()">Start New Chat</button>
 </div>
 
 <!-- Chatbot Window -->
@@ -80,7 +80,6 @@ body.show-chatbot .chatbot-toggler span:last-child {
   opacity: 1;
 }
 .new-chat-btn{
-    position: fixed;
   bottom: 105px; /* adjust so it sits above the toggle */
   right: 100px;
   background: #ffffff;
@@ -119,7 +118,10 @@ body.show-chatbot #generate-plan-btn{
   position: fixed;
   right: 35px;
   bottom: 160px;
-  width: 420px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 60vh;
+  min-height: 400px;
   background: #fff;
   border-radius: 15px;
   overflow: hidden;
@@ -157,8 +159,9 @@ header h2 {
 }
 .chatbot .chatbox {
   overflow-y: auto;
-  height: 510px;
-  padding: 30px 20px 100px;
+  height: 70vh;
+  max-height: 400px;
+  padding: 20px 20px 100px;
 }
 .chatbot :where(.chatbox, textarea)::-webkit-scrollbar {
   width: 6px;
@@ -244,6 +247,28 @@ header h2 {
 .chat-input textarea:valid ~ span {
   visibility: visible;
 }
+.chat-actions {
+  position: fixed;
+  bottom: 100px;
+  right: 100px;
+  display: flex;
+  gap: 10px;
+  z-index: 9999;
+}
+.chat-actions .chat-btn {
+  background: #ffffff;
+  color: #724ae8;
+  border: 2px solid #724ae8;
+  border-radius: 25px;
+  padding: 8px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: none;
+}
+body.show-chatbot .chat-btn {
+  display: block;
+}
 @media (max-width: 490px) {
   .chatbot-toggler {
     right: 20px;
@@ -251,7 +276,7 @@ header h2 {
   }
   .chatbot {
     right: 0;
-    bottom: 0;
+    bottom: 15vh;
     height: 100%;
     border-radius: 0;
     width: 100%;
@@ -265,6 +290,14 @@ header h2 {
   }
   .chatbot header span {
     display: block;
+  }
+  .chat-actions {
+    position: fixed;
+    bottom: 10vh;
+    right: 20px;
+    left: 20px;
+    width: auto;
+    align-items: center;
   }
 }
 </style>
