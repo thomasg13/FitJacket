@@ -20,14 +20,39 @@
       <button class="btn btn-outline-primary" type="submit">Search</button>
     </form>
     <h3>Friend Requests</h3>
-    <ul class="list-group">
-      {% for fr in request.user.received_requests.all %}
-        {% if not fr.is_accepted %}
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            {{ fr.from_user.username }}
-            <a href="{% url 'socials:accept_friend_request' fr.id %}" class="btn btn-sm btn-primary">Accept</a>
-          </li>
-        {% endif %}
+    <ul class="list-group mb-4">
+    <h6 class="mb-3">Outgoing</h6>
+      {% for request in outgoing_requests %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ request.to_user.username }}
+          <form method="POST" action="{% url 'socials:cancel_friend_request' request.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+          </form>
+        </li>
+      {% empty %}
+        <li class="list-group-item">No outgoing requests.</li>
+      {% endfor %}
+    </ul>
+
+    <ul class="list-group mb-3">
+    <h6 class="mb-3">Incoming</h6>
+      {% for fr in pending_requests %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ fr.from_user.username }}
+          <div class="d-flex gap-2">
+            <form method="POST" action="{% url 'socials:accept_friend_request' fr.id %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-primary">Accept</button>
+            </form>
+            <form method="POST" action="{% url 'socials:reject_friend_request' fr.id %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-danger">Reject</button>
+            </form>
+          </div>
+        </li>
+      {% empty %}
+        <li class="list-group-item">No incoming requests.</li>
       {% endfor %}
     </ul>
 
@@ -35,8 +60,11 @@
     <ul class="list-group">
       {% for friend in friends %}
         <li class="list-group-item d-flex justify-content-between align-items-center">
-          {{ friend.username }}
-          <a href="#" class="btn btn-sm btn-outline-secondary disabled">Friends</a>
+          <a href="{% url 'socials:friend_profile' friend.id %}">{{ friend.username }}</a>
+          <form method="POST" action="{% url 'socials:unfriend' friend.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-danger">Unfriend</button>
+          </form>
         </li>
       {% empty %}
         <li class="list-group-item">You have no friends yet.</li>
