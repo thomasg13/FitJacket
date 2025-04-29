@@ -108,7 +108,6 @@ def reject_friend_request(request, request_id):
 
 @login_required
 def friend_profile(request, user_id):
-    check_achievements(request, request.user)
     user = get_object_or_404(User, id=user_id)
 
     # Can only view if friend with the requested user, can't just change url to view users
@@ -206,7 +205,8 @@ def friend_profile(request, user_id):
 
 @login_required
 def my_profile(request):
-  return redirect('socials:friend_profile', user_id=request.user.id)
+    check_achievements(request, request.user)
+    return redirect('socials:friend_profile', user_id=request.user.id)
 
 @login_required
 def friend_progress(request, user_id):
