@@ -108,7 +108,7 @@ def reject_friend_request(request, request_id):
 
 @login_required
 def friend_profile(request, user_id):
-    check_achievements(request.user)
+    check_achievements(request, request.user)
     user = get_object_or_404(User, id=user_id)
 
     # Can only view if friend with the requested user, can't just change url to view users
@@ -307,7 +307,7 @@ def leaderboard(request):
     })
 
 
-def check_achievements(user):
+def check_achievements(request, user):
     from socials.models import Achievement, UserAchievement, FriendRequest
     from workouts.models import Workout, TimedExercise
     from users.models import UserProfile
@@ -355,4 +355,8 @@ def check_achievements(user):
                 'name': name,
                 'description': description,
             })
-            UserAchievement.objects.get_or_create(user=user, achievement=achievement)
+            user_achievement, created = UserAchievement.objects.get_or_create(user=user, achievement=achievement)
+
+            if created:
+                # 👇 New achievement earned: show a message
+                messages.success(request, f"🏆 You earned the '{name}' achievement!")
